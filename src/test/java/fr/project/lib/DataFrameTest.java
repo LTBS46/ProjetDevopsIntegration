@@ -7,6 +7,6 @@ import org.junit.jupiter.api.Test;
 public class DataFrameTest {
     @Test
     void create() {
-        var v = new DataFrame();
+        var v = new DataFrame(1, 2);
     }
 }
