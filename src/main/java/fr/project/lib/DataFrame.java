@@ -23,19 +23,20 @@ public class DataFrame<T extends Object> {
         final String col, line;
         final int x, y;
 
-        Position(String _col, String _line, int _x, int _y) {
-            col = _col;
-            line = _line;
+        Position(int _x, int _y) {
+            col = col_label[_x];
+            line = li_label[_y];
             x = _x;
             y = _y;
         }
     }
 
-    DataFrame(String filename) {
+    DataFrame(String filename) throws java.io.FileNotFoundException {
         this(new FileInputStream(filename), ',', (a,b)->{return(T) a;});
     }
 
-    DataFrame(InputStream is, char delim, BiFunction<String, Position, T> f) {
+    DataFrame(InputStream is, char _delim, BiFunction<String, Position, T> f) {
+        String delim = new String(new char[] {_delim});
         Scanner scanner = new Scanner(is);
         String header = scanner.nextLine();
         ArrayList<String> lines = new ArrayList();
@@ -44,14 +45,14 @@ public class DataFrame<T extends Object> {
         }
         scanner.close();
         String[] headers = header.split(delim);
-        height = lines.size();
-        width = headers.length;
+        int height = lines.size();
+        int width = headers.length;
         init(width, height, InitMode.PutDefault);
         col_label = headers;
         for(int i = 0; i < height; i+=1) {
-            String datas = lines.get(i).split(delim);
+            String []datas = lines.get(i).split(delim);
             for(int j = 0; j < width; j+=1) {
-                data[i][j] = f.apply(datas.get(j), new Position());
+                data[i][j] = f.apply(datas[j], new Position(i, j));
             }    
         }
     }
