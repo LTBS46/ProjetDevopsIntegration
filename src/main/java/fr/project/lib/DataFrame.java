@@ -14,7 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class DataFrame<T extends Object> {
+public class DataFrame<T extends Object> implements IDataFrame<T> {
     T[][] data;
     String[] col_label;
     String[] li_label;
