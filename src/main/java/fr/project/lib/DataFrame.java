@@ -4,6 +4,17 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.function.BiFunction;
 
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.*;
+
+import fr.project.lib.CSVBaseListener;
+import fr.project.lib.CSVLexer;
+import fr.project.lib.CSVParser;
+import fr.project.lib.CSVParser.CsvFileContext;
+import fr.project.lib.CSVParser.HdrContext;
+
+import java.util.List;
+
 import javax.xml.crypto.Data;
 
 import java.io.InputStream;
@@ -14,45 +25,33 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class DataFrame<T extends Object> implements IDataFrame<T> {
-    T[][] data;
+public class DataFrame implements IDataFrame {
+    Object[][] data;
     String[] col_label;
     String[] li_label;
 
-    public class Position {
-        final String col, line;
-        final int x, y;
-
-        Position(int _x, int _y) {
-            col = col_label[_x];
-            line = li_label[_y];
-            x = _x;
-            y = _y;
-        }
+    DataFrame(String filename) throws java.io.FileNotFoundException ,java.io.IOException{
+        this(new FileInputStream(filename));
     }
 
-    DataFrame(String filename) throws java.io.FileNotFoundException {
-        this(new FileInputStream(filename), ',', (a,b)->{return(T) a;});
-    }
-
-    DataFrame(InputStream is, char _delim, BiFunction<String, Position, T> f) {
-        String delim = new String(new char[] {_delim});
-        Scanner scanner = new Scanner(is);
-        String header = scanner.nextLine();
-        ArrayList<String> lines = new ArrayList();
-        while (scanner.hasNextLine()) {
-            lines.add(scanner.nextLine());
-        }
-        scanner.close();
-        String[] headers = header.split(delim);
-        int height = lines.size();
-        int width = headers.length;
+    DataFrame(InputStream is) throws java.io.IOException{
+        CharStream ais = CharStreams.fromStream(is);
+        CSVLexer lexer = new CSVLexer(ais);
+        CommonTokenStream tokens = new CommonTokenStream( lexer );
+        CSVParser parser = new CSVParser(tokens);
+        CsvFileContext tree = parser.csvFile();
+        List<String> header = tree.hdr().row().field().stream().map(RuleContext::getText).toList();
+        List<List<String>> content = tree.row().stream().map(
+            (row) -> row.field().stream().map(RuleContext::getText).toList()
+        ).toList();
+        int width = header.size();
+        int height = content.size();
         init(width, height, InitMode.PutDefault);
-        col_label = headers;
         for(int i = 0; i < height; i+=1) {
-            String []datas = lines.get(i).split(delim);
+            col_label[i] = header.get(i);
+            List<String> ct = content.get(i);
             for(int j = 0; j < width; j+=1) {
-                data[i][j] = f.apply(datas[j], new Position(i, j));
+                data[i][j] = ct.get(j);
             }    
         }
     }
@@ -64,7 +63,7 @@ public class DataFrame<T extends Object> implements IDataFrame<T> {
     private enum InitMode { PutBlank, PutDefault }
 
     private void init(int width, int height, InitMode im) {
-        data =(T[][]) new Object[height][width];
+        data = new Object[height][width];
         col_label = new String[width];
         li_label = new String[height];
         if(im == null) {} else
