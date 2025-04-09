@@ -19,6 +19,10 @@ public interface IDataFrame extends Iterable<String> {
         throw new NotImplementedYet();   
     }
 
+    default int[] getShape() {
+        throw new NotImplementedYet();   
+    }
+
     default List<Object> pop(String s){
         throw new NotImplementedYet();   
     }
