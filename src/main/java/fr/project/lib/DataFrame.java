@@ -61,8 +61,8 @@ public class DataFrame implements IDataFrame {
         int width = header.size();
         int height = content.size();
         init(width, height, InitMode.PutDefault);
+        col_label = header.toArray(String[]::new);
         for(int i = 0; i < height; i+=1) {
-            col_label[i] = header.get(i);
             List<String> ct = content.get(i);
             for(int j = 0; j < width; j+=1) {
                 data[i][j] = ct.get(j);
@@ -94,5 +94,25 @@ public class DataFrame implements IDataFrame {
         } else {
             throw new RuntimeException("");
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\t");
+        for(String hd : col_label) {
+            sb.append("\t");
+            sb.append(hd);
+        }
+        sb.append("\n");
+        for(int i = 0; i < data.length; i++) {
+            sb.append(li_label[i]);
+            for (int j = 0; j < data[i].length; j+= 1) {
+                sb.append("\t");
+                sb.append(data[i][j].toString());
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }
