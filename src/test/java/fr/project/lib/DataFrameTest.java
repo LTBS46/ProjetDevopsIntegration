@@ -49,8 +49,8 @@ public class DataFrameTest {
         v.col_label[0]="entier";
         v.col_label[1]="string";
 
-        List<Integer> poped=v.pop("entier");
-        List<Integer> expect= Arrays.asList(1,2,3);
+        List<Object> poped=v.pop("entier");
+        List<Object> expect= Arrays.asList(1,2,3);
         assertEquals(poped, expect);
 
         var u = new DataFrame(1, 3);
@@ -60,10 +60,10 @@ public class DataFrameTest {
 
         u.col_label[0]="string";
     }
+    
     @Test
     void create_csv() throws IOException{
         var v = new DataFrame(new ByteArrayInputStream(DUMMY_CSV_STRING.getBytes(StandardCharsets.UTF_8)));
-        System.out.println(v);
-        
+        System.out.println(v);        
     }
-    }
+}

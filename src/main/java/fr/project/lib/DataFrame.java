@@ -117,7 +117,7 @@ public class DataFrame implements IDataFrame {
         return new int [] {data.length ,data[0].length};
     }
     @Override
-    public List<T> pop(String s) {
+    public List<Object> pop(String s) {
         if (this.getEmpty()) {
             throw new IllegalArgumentException("DataFrame is empty");
         }
@@ -134,7 +134,7 @@ public class DataFrame implements IDataFrame {
             throw new IllegalArgumentException("Column '" + s + "' not found");
         }
     
-        List<T> colonne = new ArrayList<>();
+        List<Object> colonne = new ArrayList<>();
         int numRows = data.length;
         int numCols = data[0].length;
     
@@ -143,7 +143,7 @@ public class DataFrame implements IDataFrame {
             colonne.add(data[i][temp]);
         }
         @SuppressWarnings("unchecked")
-        T[][] newData = (T[][]) new Object[numRows][numCols - 1];
+        Object[][] newData =  new Object[numRows][numCols - 1];
     
         for (int i = 0; i < numRows; i++) {
             int newColIdx = 0;
@@ -166,6 +166,7 @@ public class DataFrame implements IDataFrame {
         this.col_label = newColLabels;
     
         return colonne;
+    }
 
     @Override
       public String toString() {
