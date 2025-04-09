@@ -2,6 +2,7 @@ package fr.project.lib;
 
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.function.BiFunction;
 
 import org.antlr.v4.runtime.*;
@@ -34,15 +35,28 @@ public class DataFrame implements IDataFrame {
         this(new FileInputStream(filename));
     }
 
+    private static String parseCSVField(CSVParser.FieldContext fc) {
+        if(fc.STRING() == null) {
+            return fc.getText();
+        } else if (fc.TEXT() == null) {
+            String val = fc.getText();
+            String chopped = val.substring(1, val.length() - 1);
+            String []content = chopped.split("\"\"");
+            return String.join("\"", Arrays.asList(content));
+        } else {
+            return "";
+        }
+    }
+
     DataFrame(InputStream is) throws java.io.IOException{
         CharStream ais = CharStreams.fromStream(is);
         CSVLexer lexer = new CSVLexer(ais);
         CommonTokenStream tokens = new CommonTokenStream( lexer );
         CSVParser parser = new CSVParser(tokens);
         CsvFileContext tree = parser.csvFile();
-        List<String> header = tree.hdr().row().field().stream().map(RuleContext::getText).toList();
+        List<String> header = tree.hdr().row().field().stream().map(DataFrame::parseCSVField).toList();
         List<List<String>> content = tree.row().stream().map(
-            (row) -> row.field().stream().map(RuleContext::getText).toList()
+            (row) -> row.field().stream().map(DataFrame::parseCSVField).toList()
         ).toList();
         int width = header.size();
         int height = content.size();
