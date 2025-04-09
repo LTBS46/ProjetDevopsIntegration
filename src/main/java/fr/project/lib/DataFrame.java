@@ -4,7 +4,9 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
@@ -16,10 +18,13 @@ import fr.project.lib.CSVParser.CsvFileContext;
 import fr.project.lib.CSVParser.HdrContext;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import javax.xml.crypto.Data;
 
 import java.io.InputStream;
+import java.sql.Date;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,6 +36,37 @@ public class DataFrame implements IDataFrame {
     Object[][] data;
     String[] col_label;
     String[] li_label;
+
+    private static final Map<Class<?>, Function<String, Object>> parsers;
+
+    private static final List<Function<String, Class<?>>> type_find;
+
+    static {
+        parsers = new HashMap();
+        type_find = new ArrayList<>();
+
+        parsers.put(String.class, (s)->s);
+        parsers.put(Integer.class, (s)->Integer.parseInt(s));
+        parsers.put(Float.class, (s)->Float.parseFloat(s));
+
+        type_find.add((a)->{
+            try {
+                Integer.parseInt(a);
+                return Integer.class;
+            } catch(NumberFormatException ne){
+                return null;
+            }
+        });
+
+        type_find.add((a)->{
+            try {
+                Float.parseFloat(a);
+                return Float.class;
+            } catch(NumberFormatException ne){
+                return null;
+            }
+        });
+    }
 
     DataFrame(String filename) throws java.io.FileNotFoundException ,java.io.IOException{
         this(new FileInputStream(filename));
@@ -69,6 +105,30 @@ public class DataFrame implements IDataFrame {
                 data[i][j] = ct.get(j);
             }    
         }
+        // LINE 1
+        Class<?>[] types = new Class[width];
+        for(int j = 0; j < width; j+=1) {
+            Class<?> tt = null;
+            for(Function<String, Class<?>> fsc : type_find) {
+                tt = fsc.apply((String) data[0][j]);
+                if(tt != null) {
+                    break;
+                }
+            }
+            
+            types[j] = tt != null ? tt : String.class;
+        }    
+    
+        // LINE 2-N
+
+        for(int i = 0; i < width; i++) {
+            Class<?> c = types[i];
+            Function<String, Object> col_parse = parsers.get(c);
+            for(int j = 0; j < height; j++) {
+                data[j][i] = col_parse.apply((String)data[j][i]);
+            }
+        }
+        System.out.println(Arrays.toString(types));
     }
 
     DataFrame(int width, int height) {
