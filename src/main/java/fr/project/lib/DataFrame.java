@@ -2,6 +2,7 @@ package fr.project.lib;
 
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiFunction;
 
 import javax.xml.crypto.Data;
@@ -82,4 +83,76 @@ public class DataFrame<T extends Object> implements IDataFrame<T> {
             throw new RuntimeException("");
         }
     }
+
+    @Override
+    public boolean getEmpty() { 
+        return data == null || data.length==0 || data[0].length==0;
+    }
+
+    @Override
+    public int getSize() {
+        if(this.getEmpty()){
+            return 0;
+        }
+        return data.length * data[0].length;
+    }
+    @Override
+    public int[] getShape() {
+        if(this.getEmpty()){
+            return new int []{0,0};
+        }
+        return new int [] {data.length ,data[0].length};
+    }
+    @Override
+    public List<T> pop(String s) {
+        if (this.getEmpty()) {
+            throw new IllegalArgumentException("DataFrame is empty");
+        }
+    
+        int temp = -1;
+        for (int i = 0; i < col_label.length; i++) {
+            if (col_label[i].equals(s)) {
+                temp = i;
+                break;
+            }
+        }
+    
+        if (temp == -1) {
+            throw new IllegalArgumentException("Column '" + s + "' not found");
+        }
+    
+        List<T> colonne = new ArrayList<>();
+        int numRows = data.length;
+        int numCols = data[0].length;
+    
+    
+        for (int i = 0; i < numRows; i++) {
+            colonne.add(data[i][temp]);
+        }
+        @SuppressWarnings("unchecked")
+        T[][] newData = (T[][]) new Object[numRows][numCols - 1];
+    
+        for (int i = 0; i < numRows; i++) {
+            int newColIdx = 0;
+            for (int j = 0; j < numCols; j++) {
+                if (j != temp) {
+                    newData[i][newColIdx++] = data[i][j];
+                }
+            }
+        }
+    
+        String[] newColLabels = new String[col_label.length - 1];
+        int newIdx = 0;
+        for (int i = 0; i < col_label.length; i++) {
+            if (i != temp) {
+                newColLabels[newIdx++] = col_label[i];
+            }
+        }
+    
+        this.data = newData;
+        this.col_label = newColLabels;
+    
+        return colonne;
+    }
 }
+
