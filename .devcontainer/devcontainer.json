@@ -2,6 +2,7 @@
     "name": "regular-container",
     "image": "mcr.microsoft.com/devcontainers/universal:2",
     "features": {
+        "ghcr.io/ebaskoro/devcontainer-features/sdkman:1": {},
         "ghcr.io/devcontainers/features/java:1": {
             "version":"17",
             "jdkDistro": "open"
