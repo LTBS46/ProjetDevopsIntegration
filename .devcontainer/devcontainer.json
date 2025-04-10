@@ -2,9 +2,10 @@
     "name": "regular-container",
     "image": "mcr.microsoft.com/devcontainers/universal:2",
     "features": {
-        "ghcr.io/devcontainers/features/java:latest": {
-            "jdkDistro": "open"
-        },
-        "ghcr.io/devcontainers-extra/features/maven-sdkman:latest": {}
+        "ghcr.io/devcontainers/features/java:1": {
+            "version": "none",
+            "installMaven": "true",
+            "installGradle": "false"
+        }
     }
 }
