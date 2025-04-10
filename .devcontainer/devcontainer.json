@@ -5,9 +5,6 @@
         "ghcr.io/devcontainers/features/java:latest": {
             "jdkDistro": "open"
         },
-        "ghcr.io/devcontainers-extra/features/maven-sdkman:latest": {
-            "jdkVersion": "17",
-            "jdkDistro": "open"
-        }
+        "ghcr.io/devcontainers-extra/features/maven-sdkman:latest": {}
     }
 }
