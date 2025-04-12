@@ -24,7 +24,7 @@ jobs:
           git config user.email "<>"
 
       - id: early
-        run: git log --name-status HEAD^..HEAD | python3 version_state_checker.py
+        run: git log HEAD^..HEAD | python3 version_state_checker.py
         shell: /usr/bin/bash {0}
 
   build:
