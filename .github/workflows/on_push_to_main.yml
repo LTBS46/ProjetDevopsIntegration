@@ -49,7 +49,7 @@ jobs:
 
       - name: 'Packge all the stuff'
         run: mvn package
-        
+
       - run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
@@ -62,8 +62,10 @@ jobs:
       - name: 'Update version'
         run: python3 version_handler.py min
 
-      - name: 'Add Version To Commit'
-        run: git commit -m "put release $(cat version_value)"
+      - name: 'Add Version & Commit'
+        run: |
+          git add version_value
+          git commit -m "put release $(cat version_value)"
 
       - name: 'Push To Main'
         run: git push
