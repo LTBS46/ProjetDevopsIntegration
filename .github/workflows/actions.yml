@@ -1,3 +1,5 @@
+name: 'Maven Tests (JUnit)'
+
 on:
   push:
     branches:
@@ -6,27 +8,22 @@ on:
 
 jobs:
   build:
-    name: pull request on main
+    name: 'pull request on main'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: 'Load Repository'
         uses: actions/checkout@v4
-
-      - name: Set Up
+      
+      - name: 'Have Maven Shut Up'
+        run: echo "--batch-mode" >> .mvn/maven.config
+      
+      - name: 'Setup Java & Maven'
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: maven
 
-      - name: Build
-        run: mvn clean install
-
-      # https://docs.github.com/fr/actions/use-cases-and-examples/publishing-packages/publishing-java-packages-with-maven
-      - name: Deploy
-        # if: success()
-        # github.ref == 'refs/heads/main' : Vérifit et assure que ca dépoit uniquement après la fusion de la PR avec la branche main
-       # if: github.ref == 'refs/heads/main' && success()
-        run: mvn --batch-mode --update-snapshots verify
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Run Tests'
+        run: mvn test

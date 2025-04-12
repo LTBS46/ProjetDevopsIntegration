@@ -1,0 +1,54 @@
+name: 'On Main Release'
+
+on:
+  push: 
+    branches:
+      - 'main'
+
+jobs:
+  check:
+    name: 'check stuff'
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.early.outcome }}
+    steps:
+      - name: 'Load Repository'
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - id: early
+        run: python3 version_state_checker.py
+  build:
+    name: 'Actual Stuff'
+    needs: check
+    if: needs.check.outputs.status == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Have Maven Shut Up'
+        run: echo "--batch-mode" >> .mvn/maven.config
+      
+      - name: 'Setup Java & Maven'
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: 'Packge all the stuff'
+        run: mvn package
+
+      - name: 'Make release'
+        run: gh release create $(cat version_value) --generate-notes ./target/*.jar
+
+      - name: 'Update version'
+        run: python3 version_handler.py min
+
+      - name: 'Add Version To Commit'
+        run: git commit -m "put release $(cat version_value)"
+
+      - name: 'Push To Main'
+        run: git push
+          
