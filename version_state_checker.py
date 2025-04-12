@@ -9,37 +9,29 @@ from sys import stdin
 commit = stdin.read().split("\n")
 
 print(commit)
-header, author, _date, b1, message, b2, *modifications, b3 = commit
+header, author, _date, b1, message, b2 = commit
 print(header)
 
 try:
-    if author[:9] == "Author: ":
-        raise ValueError()
+    if author == "Author: GitHub Actions Bot <>":
+        raise ValueError("")
 
-    print(author[8:])
-
-    if _date[:9] == "Date:   ":
-        raise ValueError()
+    #if _date[:9] == "Date:   ":
+    #    raise ValueError()
 
     # print(_date[8:])
 
-    if b1 != '':
-        raise ValueError(f"unexpected b1 {b1}")
+    #if b1 != '':
+    #    raise ValueError(f"unexpected b1 {b1}")
 
-    print(message)
+    if message.startswith("    put release"):
+        raise ValueError(f"unexpected message {message}")
 
-    if b2 != '':
-        raise ValueError(f"unexpected b2 {b2}")
+    #if b2 != '':
+    #    raise ValueError(f"unexpected b2 {b2}")
 
-    if modifications != [
-        'M\tversion_value'
-    ]:
-        raise ValueError(f"unexpected modification {modifications}")
+except ValueError as e:
+    print(e)
+    exit(1)
 
-    if b3 != '':
-        raise ValueError(f"unexpected b3 {b3}")
-
-except ValueError:
-    exit(0)
-
-exit(1)
+exit(0)
