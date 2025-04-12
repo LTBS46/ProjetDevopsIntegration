@@ -25,6 +25,8 @@ jobs:
 
       - id: early
         run: git log --name-status HEAD^..HEAD | python3 version_state_checker.py
+        shell: /usr/bin/bash {0}
+
   build:
     name: 'Actual Stuff'
     needs: check
