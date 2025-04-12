@@ -54,13 +54,13 @@ jobs:
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
 
+      - name: 'Update version'
+        run: python3 version_handler.py min
+
       - name: 'Make release'
         run: gh release create $(cat version_value) --generate-notes ./target/*.jar
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: 'Update version'
-        run: python3 version_handler.py min
 
       - name: 'Add Version & Commit'
         run: |
