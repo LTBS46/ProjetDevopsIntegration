@@ -8,23 +8,22 @@ on:
 
 jobs:
   build:
-    name: pull request on main
+    name: 'pull request on main'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: 'Load Repository'
         uses: actions/checkout@v4
       
-        # set batchmode so maven shut-up
-      - run: echo "--batch-mode" >> .mvn/maven.config
-      - name: Set Up
+      - name: 'Have Maven Shut Up'
+        run: echo "--batch-mode" >> .mvn/maven.config
+      
+      - name: 'Setup Java & Maven'
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
 
-      - name: Deploy
+      - name: 'Run Tests'
         run: mvn test
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
