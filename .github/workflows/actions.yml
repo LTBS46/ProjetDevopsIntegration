@@ -1,3 +1,5 @@
+name: 'Run Maven Tests'
+
 on:
   push:
     branches:
