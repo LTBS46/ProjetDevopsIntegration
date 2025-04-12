@@ -14,21 +14,17 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
+      
+        # set batchmode so maven shut-up
+      - run: echo "--batch-mode" >> .mvn/maven.config
       - name: Set Up
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: maven
 
-      - name: Build
-        run: mvn clean install
-
-      # https://docs.github.com/fr/actions/use-cases-and-examples/publishing-packages/publishing-java-packages-with-maven
       - name: Deploy
-        # if: success()
-        # github.ref == 'refs/heads/main' : Vérifit et assure que ca dépoit uniquement après la fusion de la PR avec la branche main
-       # if: github.ref == 'refs/heads/main' && success()
-        run: mvn --batch-mode --update-snapshots verify
+        run: mvn test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
