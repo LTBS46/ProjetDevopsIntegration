@@ -19,6 +19,10 @@ jobs:
         with:
           python-version: '3.13'
 
+      - run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+
       - id: early
         run: python3 version_state_checker.py
   build:
