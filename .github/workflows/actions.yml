@@ -26,7 +26,7 @@ jobs:
       - name: Deploy
         # if: success()
         # github.ref == 'refs/heads/main' : Vérifit et assure que ca dépoit uniquement après la fusion de la PR avec la branche main
-        if: github.ref == 'refs/heads/main' && success()
+       # if: github.ref == 'refs/heads/main' && success()
         run: mvn --batch-mode deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
