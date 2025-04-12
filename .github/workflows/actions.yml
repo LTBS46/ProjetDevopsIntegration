@@ -27,6 +27,6 @@ jobs:
         # if: success()
         # github.ref == 'refs/heads/main' : Vérifit et assure que ca dépoit uniquement après la fusion de la PR avec la branche main
        # if: github.ref == 'refs/heads/main' && success()
-        run: mvn --batch-mode deploy
+        run: mvn --batch-mode --update-snapshots verify
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
