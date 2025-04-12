@@ -35,7 +35,7 @@ jobs:
     steps:
       - name: 'Load Repository'
         uses: actions/checkout@v4
-        
+
       - name: 'Have Maven Shut Up'
         run: echo "--batch-mode" >> .mvn/maven.config
       
@@ -51,6 +51,8 @@ jobs:
 
       - name: 'Make release'
         run: gh release create $(cat version_value) --generate-notes ./target/*.jar
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 'Update version'
         run: python3 version_handler.py min
