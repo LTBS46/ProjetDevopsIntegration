@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-          
+
       - id: early
         run: python3 version_state_checker.py
   build:
@@ -41,10 +41,10 @@ jobs:
         run: mvn package
 
       - name: 'Make release'
-        run: gh release create
+        run: gh release create $(cat version_value) --generate-notes ./target/*.jar
 
       - name: 'Update version'
-        run: python3 version_handler.py
+        run: python3 version_handler.py min
 
       - name: 'Add Version To Commit'
         run: git commit -m "put release $(cat version_value)"
