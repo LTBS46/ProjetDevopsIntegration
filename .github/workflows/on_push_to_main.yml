@@ -49,6 +49,10 @@ jobs:
 
       - name: 'Packge all the stuff'
         run: mvn package
+        
+      - run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
 
       - name: 'Make release'
         run: gh release create $(cat version_value) --generate-notes ./target/*.jar
