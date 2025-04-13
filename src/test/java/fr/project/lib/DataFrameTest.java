@@ -1,18 +1,16 @@
 package fr.project.lib;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Arrays;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import fr.project.lib.DataFrame.InputFormat;
-
-import java.io.FileInputStream;
-import java.io.IOException;
 
 public class DataFrameTest {
 
