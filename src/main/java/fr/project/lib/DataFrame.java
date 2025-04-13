@@ -1,23 +1,18 @@
 package fr.project.lib;
 
-import static java.util.Arrays.asList;
-import static org.antlr.v4.runtime.CharStreams.fromStream;
+import static java.lang.System.arraycopy;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-
-import fr.project.lib.CSVParser.CsvFileContext;
-import fr.project.lib.CSVParser.FieldContext;
-import fr.project.lib.CSVParser.RowContext;
+import fr.project.lib.utility.TableInput;
 
 public class DataFrame implements IDataFrame {
     Object[][] data;
@@ -45,50 +40,33 @@ public class DataFrame implements IDataFrame {
         this(new FileInputStream(filename));
     }
 
-    private static String parseCSVField(FieldContext fc) {
-        if (fc.STRING() == null) {
-            return fc.getText();
-        } else if (fc.TEXT() == null) {
-            String val = fc.getText();
-            String chopped = val.substring(1, val.length() - 1);
-            String[] content = chopped.split("\"\"");
-            return String.join("\"", asList(content));
-        } else {
-            return "";
-        }
+    DataFrame(InputStream is) throws IOException {
+        this(is, InputFormat.CommaSeparatedValues);
     }
 
-    DataFrame(InputStream is) throws IOException {
-        CharStream ais = fromStream(is);
-        CSVLexer lexer = new CSVLexer(ais);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        CSVParser parser = new CSVParser(tokens);
-        CsvFileContext tree = parser.csvFile();
-        List<FieldContext> header_fields = tree.hdr().row().field();
-        int width = header_fields.size();
-        List<String> header = new ArrayList<>();
-        for (var fc : header_fields) {
-            header.add(parseCSVField(fc));
-        }
-        List<RowContext> rows_content = tree.row();
+    public enum InputFormat {
+        CommaSeparatedValues, TabSeparatedValues
+    }
 
-        int height = rows_content.size();
-        List<List<String>> content = new ArrayList<>(height);
-
-        for (RowContext rc : rows_content) {
-            List<String> line_content = new ArrayList<>(width);
-            for (var fc : rc.field()) {
-                line_content.add(parseCSVField(fc));
-            }
-            content.add(line_content);
-        }
-        
+    DataFrame(InputStream is, InputFormat _if) throws IOException {
+        this(switch (_if) {
+            case CommaSeparatedValues -> TableInput.parseCommaSeparatedValues(is);
+            case TabSeparatedValues -> TableInput.parseTabSeparatedValues(is);
+        });
+    }
+    
+    DataFrame(TableInput ti) {
+        int width = ti.w;
+        int height = ti.h;
         init(width, height, InitMode.PutDefault);
-        col_label = header.toArray(String[]::new);
+        col_label = new String[width];
+        ti.fill();
+        arraycopy(ti.col_label, 0, col_label, 0, width);
+
         for (int i = 0; i < height; i += 1) {
-            List<String> ct = content.get(i);
+            String[] act = ti.data[i];
             for (int j = 0; j < width; j += 1) {
-                data[i][j] = ct.get(j);
+                data[i][j] = act[j];
             }
         }
         // LINE 1

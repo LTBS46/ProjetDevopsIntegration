@@ -4,9 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+
+import fr.project.lib.DataFrame.InputFormat;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,14 +45,27 @@ public class DataFrameTest {
     private final static Class<?>[] DUMMY1_TYPES = new Class<?>[] {
             String.class, String.class, Integer.class, Float.class
     };
+    private final static Class<?>[] DUMMY2_TYPES = new Class<?>[] {
+            Integer.class, Integer.class
+    };
 
     @Test
     void create_csv() throws IOException {
         DataFrame v;
         try (FileInputStream f = new FileInputStream("src/test/resources/DUMMY1.csv")) {
-            v = new DataFrame(f);
+            v = new DataFrame(f, InputFormat.CommaSeparatedValues);
         }
         assertArrayEquals(v.col_types, DUMMY1_TYPES);
         assertEquals(v.getSize(), 40);
+    }
+
+    @Test
+    void create_tsv() throws IOException {
+        DataFrame v;
+        try (FileInputStream f = new FileInputStream("src/test/resources/DUMMY2.tsv")) {
+            v = new DataFrame(f, InputFormat.TabSeparatedValues);
+        }
+        assertArrayEquals(v.col_types, DUMMY2_TYPES);
+        assertEquals(v.getSize(), 10);
     }
 }
