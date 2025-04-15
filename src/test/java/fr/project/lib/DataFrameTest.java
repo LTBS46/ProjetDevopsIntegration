@@ -1,12 +1,14 @@
 package fr.project.lib;
 
 import static java.util.Arrays.asList;
+import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.lang.reflect.Method;
 
 import org.junit.jupiter.api.Test;
 
@@ -65,5 +67,17 @@ public class DataFrameTest {
         }
         assertArrayEquals(v.col_types, DUMMY2_TYPES);
         assertEquals(v.getSize(), 10);
+    }
+
+    @Test
+    void testOverrideing() {
+        for (Method m : Arrays.stream(DataFrame.class.getMethods()).toList()) {
+            if (m.getDeclaringClass() == IDataFrame.class) {
+                System.out.println("Attention : " + m.getName()
+                        + " has not been implemented it will trigger an error in the future");
+                System.out.println();
+            }
+        }
+
     }
 }
