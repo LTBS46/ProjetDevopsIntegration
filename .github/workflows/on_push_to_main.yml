@@ -72,4 +72,12 @@ jobs:
 
       - name: 'Push To Main'
         run: git push
+
+
+      - name: Merge staging -> dev
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          target_branch: dev
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           
