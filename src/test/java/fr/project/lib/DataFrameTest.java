@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -41,7 +43,7 @@ public class DataFrameTest {
     }
 
     private final static Class<?>[] DUMMY1_TYPES = new Class<?>[] {
-            String.class, String.class, Integer.class, Float.class
+            LocalDate.class, String.class, Integer.class, Float.class
     };
     private final static Class<?>[] DUMMY2_TYPES = new Class<?>[] {
             Integer.class, Integer.class
