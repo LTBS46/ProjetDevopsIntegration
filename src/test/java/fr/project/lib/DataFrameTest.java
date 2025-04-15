@@ -1,20 +1,17 @@
 package fr.project.lib;
 
 import static java.util.Arrays.asList;
-import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-import java.lang.reflect.Method;
 
 import org.junit.jupiter.api.Test;
-
-import fr.project.lib.DataFrame.InputFormat;
 
 public class DataFrameTest {
 
