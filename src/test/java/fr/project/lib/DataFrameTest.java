@@ -66,4 +66,19 @@ public class DataFrameTest {
         assertArrayEquals(v.col_types, DUMMY2_TYPES);
         assertEquals(v.getSize(), 10);
     }
+
+
+
+    @Test
+    void test_get() throws IOException{
+       
+        IDataFrame v, subV;
+        v = new DataFrame("src/test/resources/DUMMY1.csv");
+        subV = v.get("REVIEW_DATE");
+        System.out.println(subV);
+        System.out.println(v);
+
+       
+        
+    }
 }
