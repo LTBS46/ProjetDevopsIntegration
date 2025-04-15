@@ -55,14 +55,6 @@ public class DataFrameTest {
         try (FileInputStream f = new FileInputStream("src/test/resources/DUMMY1.csv")) {
             v = new DataFrame(f, InputFormat.CommaSeparatedValues);
         }
-        System.out.println(v);
-
-        System.out.println(Arrays.toString(v.col_types));
-        try {
-//            System.out.println(LocalDate.parse((String)v.data[0][0]));
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
         assertArrayEquals(v.col_types, DUMMY1_TYPES);
         assertEquals(v.getSize(), 40);
     }
