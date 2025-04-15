@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import  java.time.LocalDate;
 
 import fr.project.lib.utility.TableInput;
 
@@ -30,9 +31,12 @@ public class DataFrame implements IDataFrame {
         parsers.put(String.class, (s) -> s);
         parsers.put(Integer.class, Integer::parseInt);
         parsers.put(Float.class, Float::parseFloat);
+        parsers.put(LocalDate.class, arg0 -> LocalDate.parse(arg0.replace('/', '-')));
+
 
         type_find.add(Utility::try_parse_int);
         type_find.add(Utility::try_parse_float);
+        type_find.add(Utility::try_parse_date);
     }
 
     DataFrame(String filename) throws IOException {
