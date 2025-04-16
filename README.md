@@ -22,14 +22,7 @@ A Java implementation of a DataFrame library similar to Python's pandas, designe
   - Data type management
 - **Type Safety**: Automatic detection and conversion of data types (String, Integer, Float)
 
-## Project Structure
-src/
-├── main/java/fr/project/lib/
-│ ├── DataFrame.java # Main DataFrame implementation
-│ ├── IDataFrame.java # DataFrame interface
-│ └── utility/
-│ └── TableInput.java # CSV/TSV parser utility
-└── test/ # Unit tests
+
 # Installation
 
 1. Clone the repository:
