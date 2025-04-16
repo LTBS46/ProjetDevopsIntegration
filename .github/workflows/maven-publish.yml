@@ -1,0 +1,30 @@
+name: Publish to GitHub Packages
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          server-id: github
+          settings-path: ${{ github.workspace }}
+      
+      - name: Build and test
+        run: mvn -B verify
+      
+      - name: Publish to GitHub Packages
+        run: mvn -B deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.time.LocalDate;
 
-import fr.project.lib.Utility;
 import fr.project.lib.utility.TableInput;
 
 /**
