@@ -1,9 +1,12 @@
 package fr.project.lib;
+import  java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 import static java.lang.Float.parseFloat;
 import static java.lang.Integer.parseInt;
 
-public class Utility {
+
+public abstract class Utility {
     private Utility() {
     }
 
@@ -23,5 +26,20 @@ public class Utility {
         } catch (NumberFormatException ne) {
             return null;
         }
+    }
+    static Class<LocalDate> try_parse_date(String a) {
+        try{
+            LocalDate.parse(a.replace('/', '-'));
+            return LocalDate.class;
+        }  catch(DateTimeParseException ne){
+            return null;
+        } 
+    }
+
+    static Class<Boolean> try_parse_bool(String a) {
+        return switch(a) {
+            case "true", "false", "True", "False" -> Boolean.class;
+            default -> null;
+        };
     }
 }

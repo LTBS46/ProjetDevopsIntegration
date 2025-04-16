@@ -31,3 +31,10 @@ A Java implementation of a DataFrame library similar to Python's pandas, designe
 2. Build with Maven:
     ```bash
     mvn clean install
+```xml
+<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4-runtime</artifactId>
+			<version>4.13.2</version>
+</dependency>
+```

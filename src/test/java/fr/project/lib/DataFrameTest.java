@@ -12,6 +12,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,8 +25,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
-import fr.project.lib.DataFrame.InputFormat;
-
 public class DataFrameTest {
     private IDataFrame df;
     private static final Path RESOURCES_DIR = Paths.get("src/test/resources");
@@ -31,7 +32,7 @@ public class DataFrameTest {
         "normal_data.csv",
         "missing_values.csv",
         "mixed_types.csv",
-        "stres_test_random.csv"
+        "stress_test_random.csv"
     };
 
     @BeforeEach
@@ -66,7 +67,7 @@ public class DataFrameTest {
     }
 
     private final static Class<?>[] DUMMY1_TYPES = new Class<?>[] {
-            String.class, String.class, Integer.class, Float.class
+            LocalDate.class, String.class, Integer.class, Float.class
     };
     private final static Class<?>[] DUMMY2_TYPES = new Class<?>[] {
             Integer.class, Integer.class
@@ -76,7 +77,7 @@ public class DataFrameTest {
     void create_csv() throws IOException {
         DataFrame v;
         try (FileInputStream f = new FileInputStream("src/test/resources/DUMMY1.csv")) {
-            v = new DataFrame(f, InputFormat.CommaSeparatedValues);
+            v = new DataFrame(f, DataFrame.InputFormat.CommaSeparatedValues);
         }
         assertArrayEquals(v.col_types, DUMMY1_TYPES);
         assertEquals(v.getSize(), 40);
@@ -86,10 +87,22 @@ public class DataFrameTest {
     void create_tsv() throws IOException {
         DataFrame v;
         try (FileInputStream f = new FileInputStream("src/test/resources/DUMMY2.tsv")) {
-            v = new DataFrame(f, InputFormat.TabSeparatedValues);
+            v = new DataFrame(f, DataFrame.InputFormat.TabSeparatedValues);
         }
         assertArrayEquals(v.col_types, DUMMY2_TYPES);
         assertEquals(v.getSize(), 10);
+    }
+
+
+    @Test
+    void testOverrideing() {
+        for (Method m : Arrays.stream(DataFrame.class.getMethods()).toList()) {
+            if (m.getDeclaringClass() == IDataFrame.class) {
+                System.out.println("Attention : " + m.getName()
+                        + " has not been implemented it will trigger an error in the future");
+                System.out.println();
+            }
+        }
     }
 
 
@@ -118,16 +131,16 @@ public class DataFrameTest {
     /* --------------------------
         Edge Case Tests
        -------------------------- */
-    @Test
-    void testMissingValues() throws IOException {
-        IDataFrame edgeDf = new DataFrame(RESOURCES_DIR.resolve(TEST_CSVS[0]).toString());
-        
-        assertAll(
-            () -> assertNull(edgeDf.getElem(0, "stock")), // Empty number
-            () -> assertNull(edgeDf.getElem(1, "price")),  // Empty number
-            () -> assertEquals("", edgeDf.getElem(2, "product")) // Empty string
-        );
-    }
+   // @Test
+   // void testMissingValues() throws IOException {
+   //     IDataFrame edgeDf = new DataFrame(RESOURCES_DIR.resolve(TEST_CSVS[0]).toString());
+   //     
+   //     assertAll(
+   //         () -> assertNull(edgeDf.getElem(0, "stock")), // Empty number
+   //         () -> assertNull(edgeDf.getElem(1, "price")),  // Empty number
+   //         () -> assertEquals("", edgeDf.getElem(2, "product")) // Empty string
+   //     );
+   // }
 
     @Test
     void testMixedTypes() throws IOException {

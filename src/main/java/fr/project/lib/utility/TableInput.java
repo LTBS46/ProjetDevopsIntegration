@@ -200,7 +200,7 @@ public final class TableInput {
                 rv.data[i][j] = parseField(rc.field(j));
             }
         }
-
+        
         return rv;
     }
 }
