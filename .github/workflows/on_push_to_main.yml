@@ -4,11 +4,11 @@ description: 'Put a release out & Update version'
 
 on:
   push: 
+    branches:
+      - 'main'
     paths:
       - 'src/main/**'
       - 'pom.xml'
-    branches:
-      - 'main'
 
 jobs:
   build:
