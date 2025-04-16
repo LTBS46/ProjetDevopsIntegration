@@ -31,7 +31,7 @@ public class DataFrame implements IDataFrame {
     String[] li_label;
     
     // Data types for each column
-    Class<?>[] col_types;
+    public Class<?>[] col_types;
 
     // Static map of parsers for converting strings to specific types
     private static final Map<Class<?>, Function<String, Object>> parsers;
@@ -103,6 +103,8 @@ public class DataFrame implements IDataFrame {
     DataFrame(TableInput ti) {
         int width = ti.w;
         int height = ti.h;
+
+//        System.out.println(Arrays.toString(ti.col_label));
         init(width, height, InitMode.PutDefault);
         col_label = new String[width];
         ti.fill();
@@ -469,15 +471,15 @@ public class DataFrame implements IDataFrame {
      */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder().append("\t");
+        StringBuilder sb = new StringBuilder();
         for (String hd : col_label) {
-            sb.append("\t").append(hd);
+            sb.append("\t").append("\t").append(hd);
         }
         sb.append("\n");
         for (int i = 0; i < data.length; i++) {
             sb.append(li_label[i]);
             for (int j = 0; j < data[i].length; j += 1) {
-                sb.append("\t").append(data[i][j].toString());
+                sb.append("\t").append("\t").append(data[i][j].toString());
             }
             sb.append("\n");
         }
@@ -487,6 +489,114 @@ public class DataFrame implements IDataFrame {
 
     public Iterator<String> iterator() {
         return Arrays.asList(col_label).iterator();// Arrays.asList(col_label).iterator();
+    }
+
+    public float Mean(String col){
+        int temp = -1;
+        for (int i = 0; i < col_label.length; i++) {
+            if (col_label[i].equals(col)) {
+                temp = i;
+                break;
+            }
+        }
+        switch(col_types[temp].getSimpleName()) {
+            case "Float":{
+                    float sum=0;
+                for (int i =0; i<data.length;i++){
+                
+                        sum = sum+(float)data[i][temp];
+                    
+                }
+                return sum/data.length;
+            }
+            case "Integer":
+                int sum=0;
+                for (int i =0; i<data.length;i++){
+                    
+                        sum = sum+(int)data[i][temp];
+                    
+                }
+                return (float) sum/data.length;
+            
+            default:
+                throw new IllegalArgumentException("Column is the wrong type : " + col_types[temp]);
+        }
+
+    }
+
+    public float Max(String col){
+        int temp = -1;
+        for (int i = 0; i < col_label.length; i++) {
+            if (col_label[i].equals(col)) {
+                temp = i;
+                break;
+            }
+        }
+
+        if (temp == -1) {
+            throw new IllegalArgumentException("Column '" + col + "' not found");
+        }
+        switch(col_types[temp].getSimpleName()) {
+            case "Float":{
+                    float sum=(float)data[0][temp];
+                for (int i =0; i<data.length;i++){
+                    if (sum<(float)data[i][temp]){
+                        sum = (float)data[i][temp];
+                    }
+                }
+                return sum;
+            }
+            case "Integer":
+                int sum=(int)data[0][temp];
+                for (int i =0; i<data.length;i++){
+                    if (sum<(int)data[i][temp]){
+                        sum = (int)data[i][temp];
+                    }
+                }
+                return (float) sum;
+            
+            default:
+                throw new IllegalArgumentException("Column is the wrong type : " + col_types[temp]);
+        }
+
+        
+    }
+
+
+    public float Min(String col){
+        int temp = -1;
+        for (int i = 0; i < col_label.length; i++) {
+            if (col_label[i].equals(col)) {
+                temp = i;
+                break;
+            }
+        }
+
+        if (temp == -1) {
+            throw new IllegalArgumentException("Column '" + col + "' not found");
+        }
+        switch(col_types[temp].getSimpleName()) {
+            case "Float":{
+                    float sum=(float)data[0][temp];
+                for (int i =0; i<data.length;i++){
+                    if (sum>(float)data[i][temp]){
+                        sum = (float)data[i][temp];
+                    }
+                }
+                return sum;
+            }
+            case "Integer":
+                int sum=(int)data[0][temp];
+                for (int i =0; i<data.length;i++){
+                    if (sum>(int)data[i][temp]){
+                        sum = (int)data[i][temp];
+                    }
+                }
+                return (float) sum;
+            
+            default:
+                throw new IllegalArgumentException("Column is the wrong type : " + col_types[temp]);
+        }
     }
 }
 
