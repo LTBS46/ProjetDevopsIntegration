@@ -21,7 +21,7 @@ FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 
 # Copy the fat jar (with dependencies) from build stage
-COPY --from=build /app/target/opium-dataframe-1.0-SNAPSHOT-jar-with-dependencies.jar app.jar
+COPY --from=build /app/target/rakoun-dataframe-1.0-SNAPSHOT-jar-with-dependencies.jar app.jar
 
 # Copy any additional resources if needed for the demo
 COPY --from=build /app/src/main/java/fr/project/demo/demo.csv ./demo.csv
