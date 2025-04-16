@@ -13,6 +13,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: 'Have Maven Shut Up'
+        run: echo "--batch-mode" >> .mvn/maven.config
+        
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
