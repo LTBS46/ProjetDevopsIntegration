@@ -36,7 +36,10 @@ public abstract class Utility {
         } 
     }
 
-    static CLass<Boolean> try_parse_bool(String a) {
-        return a == "true" || a == "false" ? Boolean.class : null;
+    static Class<Boolean> try_parse_bool(String a) {
+        return switch(a) {
+            case "true", "false", "True", "False" -> Boolean.class;
+            default -> null;
+        };
     }
 }
