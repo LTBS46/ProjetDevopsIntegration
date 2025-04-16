@@ -2,139 +2,171 @@ package fr.project.lib;
 
 import java.util.Iterator;
 import java.util.List;
+
 /**
- * Interface defining the core functionality of a DataFrame structure.
- * Represents a tabular data structure with labeled columns and rows,
- * similar to pandas DataFrame in Python.
+ * Interface defining a tabular data structure with labeled columns and rows,
+ * providing functionality similar to pandas DataFrame in Python.
+ * 
+ * <p>The DataFrame stores data in a 2D grid with the following characteristics:
+ * <ul>
+ *   <li>Columns have names and inferred/declared types</li>
+ *   <li>Rows can optionally have labels</li>
+ *   <li>Supports heterogeneous data (mixed types across columns)</li>
+ *   <li>Provides flexible data access and statistical operations</li>
+ * </ul>
  */
 public interface IDataFrame extends Iterable<String> {
     
-    /**
-     * Exception thrown when a method has not been implemented yet.
-     * Used for default interface methods that must be overridden.
-     */
-    class NotImplementedYet extends RuntimeException {}
-    
+  
     /**
      * Checks if the DataFrame contains no data.
-     * @return true if the DataFrame is empty (no rows or columns), false otherwise
-     * @throws NotImplementedYet if not implemented by concrete class
+     * @return true if the DataFrame has no rows or columns, false otherwise
+     * @throws IllegalStateException if the operation cannot be completed
      */
-    default boolean getEmpty() { 
-        throw new NotImplementedYet();
-    }
+    boolean getEmpty();
 
     /**
      * Returns an iterator over the column labels of the DataFrame.
-     * @return Iterator of column names
-     * @throws NotImplementedYet if not implemented by concrete class
+     * @return Iterator of column names in their natural order
+     * @throws IllegalStateException if the DataFrame is empty
      */
     @Override
-    default Iterator<String> iterator() {
-        throw new NotImplementedYet();
-    }
+    Iterator<String> iterator();
 
     /**
-     * Gets the total number of data cells in the DataFrame (rows × columns).
-     * @return Total count of data cells
-     * @throws NotImplementedYet if not implemented by concrete class
+     * Gets the total number of data cells in the DataFrame.
+     * @return Calculated as rows × columns
+     * @throws IllegalStateException if the DataFrame is empty
      */
-    default int getSize() {
-        throw new NotImplementedYet();   
-    }
+    int getSize();
 
     /**
-     * Gets the dimensions of the DataFrame as [rows, columns].
-     * @return 2-element array containing row count and column count
-     * @throws NotImplementedYet if not implemented by concrete class
+     * Gets the dimensions of the DataFrame.
+     * @return 2-element array in format [rowCount, columnCount]
+     * @throws IllegalStateException if the DataFrame is empty
      */
-    default int[] getShape() {
-        throw new NotImplementedYet();   
-    }
+    int[] getShape();
+
+    /**
+     * Gets the number of dimensions of the DataFrame.
+     * @return Always returns 2 (rows and columns) for 2D structure
+     */
+    int getNDim();
 
     /**
      * Removes and returns a column from the DataFrame.
-     * @param s Name of the column to remove
-     * @return List containing all values from the removed column
-     * @throws NotImplementedYet if not implemented by concrete class
-     * @throws IllegalArgumentException if column not found or DataFrame is empty
+     * @param columnName Name of the column to remove
+     * @return List containing all values from the removed column in row order
+     * @throws IllegalStateException if the DataFrame is empty
+     * @throws IllegalArgumentException if the column doesn't exist
      */
-    default List<Object> pop(String s) {
-        throw new NotImplementedYet();   
-    }
+    List<Object> pop(String columnName);
 
     /**
      * Gets a subset DataFrame containing only the specified columns.
-     * @param cols Names of columns to include in the subset
+     * @param columnNames Names of columns to include in the subset
      * @return New DataFrame containing only the specified columns
-     * @throws NotImplementedYet if not implemented by concrete class
-     * @throws IllegalArgumentException if any column name is not found
+     * @throws IllegalStateException if the DataFrame is empty
+     * @throws IllegalArgumentException if any column name doesn't exist
+     * @throws NullPointerException if columnNames is null
      */
-    default IDataFrame get(String... cols) {
-        throw new NotImplementedYet();   
-    }
+    IDataFrame get(String... columnNames);
 
     /**
-     * Retrieves a single element, full row, or full column from the DataFrame based on the specified
-     * row and column selectors. This is the most flexible accessor method supporting multiple access patterns.
+     * Gets a subset DataFrame containing only the specified columns by index.
+     * @param columnIndices 0-based indices of columns to include
+     * @return New DataFrame containing only the specified columns
+     * @throws IllegalStateException if the DataFrame is empty
+     * @throws IndexOutOfBoundsException if any index is invalid
+     * @throws NullPointerException if columnIndices is null
+     */
+    IDataFrame get(int... columnIndices);
+
+    /**
+     * Flexible element accessor supporting multiple retrieval patterns.
      * 
      * <p><b>Access Patterns:</b>
      * <ul>
-     *   <li><b>Single Element:</b> {@code getElem(rowIndex, columnName)} or {@code getElem(rowIndex, columnIndex)}</li>
-     *   <li><b>Full Row:</b> {@code getElem(rowIndex, null)}</li>
-     *   <li><b>Full Column:</b> {@code getElem(null, columnSpec)}</li>
+     *   <li><b>Single Element:</b> {@code getElem(rowIndex, columnName)}</li>
+     *   <li><b>Full Row:</b> {@code getElem(rowIndex, null)} → returns Object[]</li>
+     *   <li><b>Full Column:</b> {@code getElem(null, columnName)} → returns Object[]</li>
      * </ul>
      * 
-     * @param rowSpec The row selector, which can be:
+     * @param rowSpec Can be:
      *                <ul>
-     *                  <li>{@code Integer} - row index (0-based)</li>
-     *                  <li>{@code String} - row label (if labels are set)</li>
-     *                  <li>{@code null} - indicates all rows</li>
+     *                  <li>Integer (0-based row index)</li>
+     *                  <li>String (row label if available)</li>
+     *                  <li>null (all rows)</li>
      *                </ul>
-     * @param colSpec The column selector, which can be:
-     *                <ul>
-     *                  <li>{@code Integer} - column index (0-based)</li>
-     *                  <li>{@code String} - column name</li>
-     *                  <li>{@code null} - indicates all columns</li>
-     *                </ul>
-     * @return The requested data as:
-     *         <ul>
-     *           <li>{@code Object} - for single element access</li>
-     *           <li>{@code Object[]} - for full row/column access</li>
-     *         </ul>
-     * @throws IllegalStateException if the DataFrame is empty
+     * @param columnSpec Can be:
+     *                   <ul>
+     *                     <li>Integer (0-based column index)</li>
+     *                     <li>String (column name)</li>
+     *                     <li>null (all columns)</li>
+     *                   </ul>
+     * @return Requested data in appropriate format
+     * @throws IllegalStateException if DataFrame is empty
      * @throws IllegalArgumentException if:
      *         <ul>
      *           <li>Both specifiers are null</li>
-     *           <li>Invalid specifier types are provided</li>
-     *           <li>Row/column labels don't exist</li>
+     *           <li>Invalid specifier types</li>
+     *           <li>Label not found</li>
      *         </ul>
-     * @throws IndexOutOfBoundsException if numeric indices are out of bounds
+     * @throws IndexOutOfBoundsException if numeric indices are invalid
      */
-    default Object getElem(Object rowSpec, Object colSpec){
-        throw new NotImplementedYet();
-    }
-    
+    Object getElem(Object rowSpec, Object columnSpec);
+
     /**
-     * Gets the number of dimensions of the DataFrame (always 2 for 2D structure).
-     * @return Number of dimensions (2 for rows and columns)
-     * @throws NotImplementedYet if not implemented by concrete class
+     * Calculates the arithmetic mean of a numeric column.
+     * @param columnName Name of the column to calculate
+     * @return Mean value as float
+     * @throws IllegalStateException if DataFrame is empty
+     * @throws IllegalArgumentException if:
+     *         <ul>
+     *           <li>Column doesn't exist</li>
+     *           <li>Column is not numeric (Integer/Float)</li>
+     *           <li>Column contains only null values</li>
+     *         </ul>
      */
-    default int getNDim() {
-        throw new NotImplementedYet();
-    }
+    float Mean(String columnName);
 
-    default float Mean(String col){
-        throw new NotImplementedYet();
-    }
+    /**
+     * Finds the maximum value in a numeric column.
+     * @param columnName Name of the column to analyze
+     * @return Maximum value as float
+     * @throws IllegalStateException if DataFrame is empty
+     * @throws IllegalArgumentException if:
+     *         <ul>
+     *           <li>Column doesn't exist</li>
+     *           <li>Column is not numeric (Integer/Float)</li>
+     *           <li>Column contains only null values</li>
+     *         </ul>
+     */
+    float Max(String columnName);
 
-    default float Max(String col){
-        throw new NotImplementedYet();
-    }
-    default float Min(String col){
-        throw new NotImplementedYet();
-    }
-    default String toCSV() {
-        throw new NotImplementedYet();
-    }
+    /**
+     * Finds the minimum value in a numeric column.
+     * @param columnName Name of the column to analyze
+     * @return Minimum value as float
+     * @throws IllegalStateException if DataFrame is empty
+     * @throws IllegalArgumentException if:
+     *         <ul>
+     *           <li>Column doesn't exist</li>
+     *           <li>Column is not numeric (Integer/Float)</li>
+     *           <li>Column contains only null values</li>
+     *         </ul>
+     */
+    float Min(String columnName);
+
+    /**
+     * Generates CSV representation of the DataFrame.
+     * @return String containing CSV data with:
+     *         <ul>
+     *           <li>First line: column headers</li>
+     *           <li>Subsequent lines: data rows</li>
+     *           <li>Proper escaping of special characters</li>
+     *         </ul>
+     * @throws IllegalStateException if DataFrame is empty
+     */
+    String toCSV();
 }
