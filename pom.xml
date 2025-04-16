@@ -15,11 +15,11 @@
 			<id>github</id>
 			<url>https://maven.pkg.github.com/LTBS46/ProjetDevopsIntegration</url>
 		</snapshotRepository>
-		<id>github</id>
-     		<name>GitHub LTBS46 Apache Maven Packages</name>
-     		<url>https://maven.pkg.github.com/LTBS46/ProjetDevopsIntegration</url>
-   </repository>
-
+		<repository>
+			<id>github</id>
+     			<name>GitHub LTBS46 Apache Maven Packages</name>
+     			<url>https://maven.pkg.github.com/LTBS46/ProjetDevopsIntegration</url>
+	   	</repository>
 	</distributionManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
