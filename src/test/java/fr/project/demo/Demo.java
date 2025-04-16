@@ -7,7 +7,7 @@ public class Demo {
         DataFrame df = new DataFrame("demo.csv");
         System.out.println("Shape: " + df.getShape()[0] + " rows, " + df.getShape()[1] + " cols");
         System.out.println("First 5 rows:");
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 4; i++) {
             System.out.println(df.get(i)); // ou df.get(i, ...) si df.get(i) n'existe pas
         }
 
