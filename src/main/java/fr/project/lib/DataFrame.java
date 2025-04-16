@@ -1,6 +1,8 @@
 package fr.project.lib;
 
+import static java.lang.String.join;
 import static java.lang.System.arraycopy;
+import static java.util.Arrays.stream;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,26 +14,28 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import  java.time.LocalDate;
+import java.time.LocalDate;
 
+import fr.project.lib.Utility;
 import fr.project.lib.utility.TableInput;
 
 /**
  * A Java implementation of a DataFrame similar to pandas' DataFrame.
- * Stores tabular data with labeled columns and rows, supporting various data operations.
+ * Stores tabular data with labeled columns and rows, supporting various data
+ * operations.
  */
 public class DataFrame implements IDataFrame {
     // Core data storage as a 2D array [rows][columns]
     Object[][] data;
-    
+
     // Column names array
     String[] col_label;
-    
+
     // Row labels array
     String[] li_label;
-    
+
     // Data types for each column
-    Class<?>[] col_types;
+    public Class<?>[] col_types;
 
     // Static map of parsers for converting strings to specific types
     private static final Map<Class<?>, Function<String, Object>> parsers;
@@ -60,6 +64,7 @@ public class DataFrame implements IDataFrame {
 
     /**
      * Constructs DataFrame from a file
+     * 
      * @param filename Path to input file
      * @throws IOException If file reading fails
      */
@@ -69,6 +74,7 @@ public class DataFrame implements IDataFrame {
 
     /**
      * Constructs DataFrame from an input stream (CSV format by default)
+     * 
      * @param is Input stream containing data
      * @throws IOException If stream reading fails
      */
@@ -85,7 +91,8 @@ public class DataFrame implements IDataFrame {
 
     /**
      * Constructs DataFrame from input stream with specified format
-     * @param is Input stream containing data
+     * 
+     * @param is  Input stream containing data
      * @param _if Format of the input data
      * @throws IOException If stream reading fails
      */
@@ -95,14 +102,17 @@ public class DataFrame implements IDataFrame {
             case TabSeparatedValues -> TableInput.parseTabSeparatedValues(is);
         });
     }
-    
+
     /**
      * Constructs DataFrame from TableInput object
+     * 
      * @param ti Pre-parsed table input structure
      */
     DataFrame(TableInput ti) {
         int width = ti.w;
         int height = ti.h;
+
+//        System.out.println(Arrays.toString(ti.col_label));
         init(width, height, InitMode.PutDefault);
         col_label = new String[width];
         ti.fill();
@@ -115,7 +125,7 @@ public class DataFrame implements IDataFrame {
                 data[i][j] = act[j];
             }
         }
-        
+
         // Detect column types using first row
         Class<?>[] types = new Class[width];
         for (int j = 0; j < width; j += 1) {
@@ -142,7 +152,8 @@ public class DataFrame implements IDataFrame {
 
     /**
      * Creates empty DataFrame with specified dimensions
-     * @param width Number of columns
+     * 
+     * @param width  Number of columns
      * @param height Number of rows
      */
     DataFrame(int width, int height) {
@@ -158,9 +169,10 @@ public class DataFrame implements IDataFrame {
 
     /**
      * Initializes DataFrame storage with specified mode
-     * @param width Number of columns
+     * 
+     * @param width  Number of columns
      * @param height Number of rows
-     * @param im Initialization mode (blank or default labels)
+     * @param im     Initialization mode (blank or default labels)
      */
     private void init(int width, int height, InitMode im) {
         data = new Object[height][width];
@@ -184,6 +196,7 @@ public class DataFrame implements IDataFrame {
 
     /**
      * Checks if DataFrame is empty
+     * 
      * @return true if DataFrame contains no data
      */
     @Override
@@ -193,6 +206,7 @@ public class DataFrame implements IDataFrame {
 
     /**
      * Gets total number of cells in DataFrame
+     * 
      * @return Count of all data cells
      */
     @Override
@@ -205,6 +219,7 @@ public class DataFrame implements IDataFrame {
 
     /**
      * Gets dimensions of DataFrame [rows, columns]
+     * 
      * @return 2-element array with row and column counts
      */
     @Override
@@ -217,6 +232,7 @@ public class DataFrame implements IDataFrame {
 
     /**
      * Removes and returns a column from DataFrame
+     * 
      * @param s Name of column to remove
      * @return List of values from the removed column
      * @throws IllegalArgumentException if column not found or DataFrame is empty
@@ -277,6 +293,7 @@ public class DataFrame implements IDataFrame {
 
     /**
      * Gets subset DataFrame containing specified columns (by name)
+     * 
      * @param cols Names of columns to include
      * @return New DataFrame with only specified columns
      * @throws IllegalArgumentException if any column not found
@@ -288,6 +305,7 @@ public class DataFrame implements IDataFrame {
 
     /**
      * Gets subset DataFrame containing specified columns (by index)
+     * 
      * @param colIndices Indices of columns to include
      * @return New DataFrame with only specified columns
      * @throws IndexOutOfBoundsException if any index is invalid
@@ -299,15 +317,15 @@ public class DataFrame implements IDataFrame {
     /**
      * Internal implementation of get() for column names
      */
-    private IDataFrame getByName(String[] cols){
+    private IDataFrame getByName(String[] cols) {
         if (this.getEmpty()) {
             throw new IllegalStateException("DataFrame is empty");
         }
-        
+
         if (cols == null || cols.length == 0) {
             throw new IllegalArgumentException("At least one column must be specified");
         }
-    
+
         // Resolve and validate column indices
         int[] colIndices = new int[cols.length];
         for (int i = 0; i < cols.length; i++) {
@@ -316,7 +334,7 @@ public class DataFrame implements IDataFrame {
                 throw new IllegalArgumentException("Column '" + cols[i] + "' not found");
             }
         }
-    
+
         return createColumnSubset(colIndices);
     }
 
@@ -327,25 +345,26 @@ public class DataFrame implements IDataFrame {
         if (this.getEmpty()) {
             throw new IllegalStateException("DataFrame is empty");
         }
-        
+
         if (colIndices == null || colIndices.length == 0) {
             throw new IllegalArgumentException("At least one column must be specified");
         }
-    
+
         // Validate all column indices
         for (int i = 0; i < colIndices.length; i++) {
             if (colIndices[i] < 0 || colIndices[i] >= col_label.length) {
                 throw new IndexOutOfBoundsException(
-                    String.format("Column index %d out of bounds [0-%d]", 
-                        colIndices[i], col_label.length - 1));
+                        String.format("Column index %d out of bounds [0-%d]",
+                                colIndices[i], col_label.length - 1));
             }
         }
-    
+
         return createColumnSubset(colIndices);
     }
-        
+
     /**
      * Finds index of column by name
+     * 
      * @param colName Name of column to find
      * @return Column index or -1 if not found
      */
@@ -357,36 +376,37 @@ public class DataFrame implements IDataFrame {
         }
         return -1;
     }
-    
+
     /**
      * Creates new DataFrame with subset of columns
+     * 
      * @param colIndices Indices of columns to include
      * @return New DataFrame with specified columns
      */
     private IDataFrame createColumnSubset(int[] colIndices) {
         DataFrame subset = new DataFrame(colIndices.length, data.length);
-        
+
         // Copy column labels
         for (int j = 0; j < colIndices.length; j++) {
             subset.col_label[j] = this.col_label[colIndices[j]];
         }
-        
+
         // Copy row labels
         System.arraycopy(this.li_label, 0, subset.li_label, 0, data.length);
-        
+
         // Copy data cells
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < colIndices.length; j++) {
                 subset.data[i][j] = this.data[i][colIndices[j]];
             }
         }
-        
+
         // Copy column type information
         subset.col_types = new Class<?>[colIndices.length];
         for (int j = 0; j < colIndices.length; j++) {
             subset.col_types[j] = this.col_types[colIndices[j]];
         }
-        
+
         return subset;
     }
 
@@ -461,32 +481,164 @@ public class DataFrame implements IDataFrame {
         }
     }
 
-
-
     /**
      * Generates string representation of DataFrame
+     * 
      * @return Formatted table showing data with labels
      */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder().append("\t");
+        StringBuilder sb = new StringBuilder();
         for (String hd : col_label) {
-            sb.append("\t").append(hd);
+            sb.append("\t").append("\t").append(hd);
         }
         sb.append("\n");
         for (int i = 0; i < data.length; i++) {
             sb.append(li_label[i]);
             for (int j = 0; j < data[i].length; j += 1) {
-                sb.append("\t").append(data[i][j].toString());
+                sb.append("\t").append("\t").append(data[i][j].toString());
             }
             sb.append("\n");
         }
         return sb.toString();
     }
 
-
     public Iterator<String> iterator() {
         return Arrays.asList(col_label).iterator();// Arrays.asList(col_label).iterator();
     }
-}
 
+    public float Mean(String col){
+        int temp = -1;
+        for (int i = 0; i < col_label.length; i++) {
+            if (col_label[i].equals(col)) {
+                temp = i;
+                break;
+            }
+        }
+        switch(col_types[temp].getSimpleName()) {
+            case "Float":{
+                    float sum=0;
+                for (int i =0; i<data.length;i++){
+                
+                        sum = sum+(float)data[i][temp];
+                    
+                }
+                return sum/data.length;
+            }
+            case "Integer":
+                int sum=0;
+                for (int i =0; i<data.length;i++){
+                    
+                        sum = sum+(int)data[i][temp];
+                    
+                }
+                return (float) sum/data.length;
+            
+            default:
+                throw new IllegalArgumentException("Column is the wrong type : " + col_types[temp]);
+        }
+
+    }
+
+    public float Max(String col){
+        int temp = -1;
+        for (int i = 0; i < col_label.length; i++) {
+            if (col_label[i].equals(col)) {
+                temp = i;
+                break;
+            }
+        }
+
+        if (temp == -1) {
+            throw new IllegalArgumentException("Column '" + col + "' not found");
+        }
+        switch(col_types[temp].getSimpleName()) {
+            case "Float":{
+                    float sum=(float)data[0][temp];
+                for (int i =0; i<data.length;i++){
+                    if (sum<(float)data[i][temp]){
+                        sum = (float)data[i][temp];
+                    }
+                }
+                return sum;
+            }
+            case "Integer":
+                int sum=(int)data[0][temp];
+                for (int i =0; i<data.length;i++){
+                    if (sum<(int)data[i][temp]){
+                        sum = (int)data[i][temp];
+                    }
+                }
+                return (float) sum;
+            
+            default:
+                throw new IllegalArgumentException("Column is the wrong type : " + col_types[temp]);
+        }
+
+        
+    }
+
+
+    public float Min(String col){
+        int temp = -1;
+        for (int i = 0; i < col_label.length; i++) {
+            if (col_label[i].equals(col)) {
+                temp = i;
+                break;
+            }
+        }
+
+        if (temp == -1) {
+            throw new IllegalArgumentException("Column '" + col + "' not found");
+        }
+        switch(col_types[temp].getSimpleName()) {
+            case "Float":{
+                    float sum=(float)data[0][temp];
+                for (int i =0; i<data.length;i++){
+                    if (sum>(float)data[i][temp]){
+                        sum = (float)data[i][temp];
+                    }
+                }
+                return sum;
+            }
+            case "Integer":
+                int sum=(int)data[0][temp];
+                for (int i =0; i<data.length;i++){
+                    if (sum>(int)data[i][temp]){
+                        sum = (int)data[i][temp];
+                    }
+                }
+                return (float) sum;
+            
+            default:
+                throw new IllegalArgumentException("Column is the wrong type : " + col_types[temp]);
+        }
+    }
+
+    @Override
+    public int getNDim() {
+        return 2;
+    }
+
+    private static String formatToCSV(String input) {
+        if (input.contains(",")) {
+            return '"' + input.replace("\"", "\"\"") + '"';
+        } else
+            return input;
+    }
+
+    private static String makeCSVLine(String...input) {
+        return makeCSVLine(Arrays.asList(input));
+    }
+
+    private static String makeCSVLine(List<String> input) {
+        return join(",", input.stream().map(DataFrame::formatToCSV).toList());
+    }
+
+    @Override
+    public String toCSV() {
+      return makeCSVLine(col_label) + "\n" + join("\n", stream(data).map(
+        l -> makeCSVLine(stream(l).map(Object::toString).toList())
+      ).toList());
+    }
+}

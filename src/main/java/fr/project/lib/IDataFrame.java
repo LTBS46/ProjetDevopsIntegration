@@ -123,4 +123,18 @@ public interface IDataFrame extends Iterable<String> {
     default int getNDim() {
         throw new NotImplementedYet();
     }
+
+    default float Mean(String col){
+        throw new NotImplementedYet();
+    }
+
+    default float Max(String col){
+        throw new NotImplementedYet();
+    }
+    default float Min(String col){
+        throw new NotImplementedYet();
+    }
+    default String toCSV() {
+        throw new NotImplementedYet();
+    }
 }

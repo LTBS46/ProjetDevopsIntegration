@@ -209,5 +209,40 @@ public class DataFrameTest {
             Files.deleteIfExists(tsvFile);
         }
     }
-}
 
+    @Test
+    void testMeanfloat() throws IOException {
+        DataFrame edgeDf = new DataFrame(RESOURCES_DIR.resolve(TEST_CSVS[0]).toString());
+        assertEquals(56250.1875, edgeDf.Mean("salary"));
+    }
+
+    @Test
+    void testMaxfloat() throws IOException {
+        DataFrame edgeDf = new DataFrame(RESOURCES_DIR.resolve(TEST_CSVS[0]).toString());
+        assertEquals(82000.00, edgeDf.Max("salary"));
+    }
+
+    @Test
+    void testMinfloat() throws IOException {
+        DataFrame edgeDf = new DataFrame(RESOURCES_DIR.resolve(TEST_CSVS[0]).toString());
+        assertEquals(0.0, edgeDf.Min("salary"));
+    }
+
+    @Test
+    void testMeanint() throws IOException {
+        DataFrame edgeDf = new DataFrame(RESOURCES_DIR.resolve(TEST_CSVS[0]).toString());
+        assertEquals(35.75, edgeDf.Mean("age"));
+    }
+
+    @Test
+    void testMaxint() throws IOException {
+        DataFrame edgeDf = new DataFrame(RESOURCES_DIR.resolve(TEST_CSVS[0]).toString());
+        assertEquals(45, edgeDf.Max("age"));
+    }
+
+    @Test
+    void testMinint() throws IOException {
+        DataFrame edgeDf = new DataFrame(RESOURCES_DIR.resolve(TEST_CSVS[0]).toString());
+        assertEquals(28, edgeDf.Min("age"));
+    }
+}
