@@ -32,7 +32,7 @@ public class DataFrameTest {
         "normal_data.csv",
         "missing_values.csv",
         "mixed_types.csv",
-        "stres_test_random.csv"
+        "stress_test_random.csv"
     };
 
     @BeforeEach
