@@ -22,6 +22,7 @@ import fr.project.lib.TabSeparatedValuesLexer;
 import fr.project.lib.TabSeparatedValuesParser;
 import fr.project.lib.TabSeparatedValuesParser.TabSeparatedValuesFileContext;
 
+
 /**
  * A utility class for parsing tabular data from CSV/TSV files into a structured format.
  * Uses ANTLR parsers for robust parsing of delimited text files.
@@ -44,6 +45,7 @@ public final class TableInput {
      * @param width Number of columns
      * @param height Number of rows
      */
+    
     TableInput(int width, int height) {
         col_label = new String[width];
         data = new String[height][width];
