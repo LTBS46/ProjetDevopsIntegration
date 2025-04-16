@@ -5,8 +5,8 @@ description: 'Put a release out & Update version'
 on:
   push: 
     paths:
-      - 'src/main'
-      - 'pom.mxl'
+      - 'src/main/**'
+      - 'pom.xml'
     branches:
       - 'main'
 
