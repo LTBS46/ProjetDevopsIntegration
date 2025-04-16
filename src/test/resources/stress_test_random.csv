@@ -1,4 +1,4 @@
-id,temperature,active,sensor_id
+id,temperature,active
 0,908.11,False
 1,985.7,True
 2,225.4,False
