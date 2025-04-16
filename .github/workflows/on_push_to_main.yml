@@ -4,11 +4,10 @@ description: 'Put a release out & Update version'
 
 on:
   push: 
-    paths:
-      - 'src/main'
-      - 'pom.mxl'
     branches:
       - 'main'
+    paths-ignore:
+      - 'version_value'
 
 jobs:
   build:
