@@ -123,4 +123,8 @@ public interface IDataFrame extends Iterable<String> {
     default int getNDim() {
         throw new NotImplementedYet();
     }
+
+    default String toCSV() {
+        throw new NotImplementedYet();
+    }
 }
