@@ -43,10 +43,10 @@ def generate_big_csv(
 
 
 if __name__ == "__main__":
-    generate_big_csv(rows=1000) 
+    generate_big_csv(rows=10000) 
     generate_big_csv(
         output_path="src/test/resources/stress_test_random.csv",
-        rows=5000,
+        rows=10000,
         columns=["id", "temperature", "active", "sensor_id"],
         random_data=True
     )
