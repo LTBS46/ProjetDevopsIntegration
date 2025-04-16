@@ -1,11 +1,17 @@
 on:
-  release:
-    types: [created]
+  push:
+    branches:
+      - 'main'
+#  release:
+#    types: [published]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+    permissions:
+      id-token: write
+      pages: write
+      
     environment:
       name: github-pages
       url: ${{ steps.build.outputs.page_url }}
