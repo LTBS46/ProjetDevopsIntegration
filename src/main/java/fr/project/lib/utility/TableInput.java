@@ -1,20 +1,11 @@
 package fr.project.lib.utility;
 
-import static java.util.Arrays.asList;
 import static org.antlr.v4.runtime.CharStreams.fromStream;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.ToIntFunction;
-
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.TokenSource;
-import org.antlr.v4.runtime.TokenStream;
-
 import fr.project.lib.CommaSeparatedValuesLexer;
 import fr.project.lib.CommaSeparatedValuesParser;
 import fr.project.lib.CommaSeparatedValuesParser.CommaSeparatedValuesFileContext;
