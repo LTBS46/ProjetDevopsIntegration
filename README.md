@@ -24,7 +24,7 @@ A Java implementation of a DataFrame library similar to Python's pandas, designe
 - **Type Safety**: Automatic detection and conversion of data types (String, Integer, Float)
 ## Workflow and tools 
 
-First of all we choose a specific way to manage branches in git to allow.
+First of all we choose a specific way to manage branches in git to allow continu integration.
 The tools are mostly in the badgs of this readme.
 
 
