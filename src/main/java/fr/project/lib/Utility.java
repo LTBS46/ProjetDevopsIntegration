@@ -35,4 +35,8 @@ public abstract class Utility {
             return null;
         } 
     }
+
+    static CLass<Boolean> try_parse_bool(String a) {
+        return a == "true" || a == "false" ? Boolean.class : null;
+    }
 }
