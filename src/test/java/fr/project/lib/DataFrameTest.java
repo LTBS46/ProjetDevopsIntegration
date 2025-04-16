@@ -197,7 +197,7 @@ public class DataFrameTest {
     void testTabDelimited() throws IOException {
         // Create temporary TSV file
         Path tsvFile = RESOURCES_DIR.resolve("test.tab");
-        Files.writeString(tsvFile, "col1\tcol2\nval1\tval2");
+        Files.writeString(tsvFile, "col1\tcol2\nval1\tval2\n");
         
         try {
             DataFrame tsvDf = new DataFrame(
