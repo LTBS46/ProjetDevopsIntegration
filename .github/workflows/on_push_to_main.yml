@@ -38,7 +38,7 @@ jobs:
 
       - name: 'Packge all the stuff'
         run: |
-          mvn compile
+          mvn clean compile
           mvn versions:set -DnewVersion=$(cat version_value)
           rm -f pom.xml.versionsBackup
           mvn clean package
