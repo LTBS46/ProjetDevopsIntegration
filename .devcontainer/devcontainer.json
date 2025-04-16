@@ -1,11 +1,24 @@
 {
-    "name": "regular-container",
+    "name": "java-dataframe-dev",
     "image": "mcr.microsoft.com/devcontainers/universal:2",
     "features": {
         "ghcr.io/devcontainers/features/java:1": {
-            "version": "none",
-            "installMaven": "true",
-            "installGradle": "false"
+            "version": "17",
+            "installMaven": true,
+            "mavenVersion": "3.9.6",
+            "installGradle": false
         }
-    }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "vscjava.vscode-java-pack",
+                "vscjava.vscode-maven",
+                "mike-lischke.vscode-antlr4", // Correct ANTLR extension ID
+                "redhat.java",
+                "sonarsource.sonarlint-vscode"
+            ]
+        }
+    },
+    "postCreateCommand": "mvn clean install -DskipTests"
 }
