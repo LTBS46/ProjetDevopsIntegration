@@ -52,7 +52,7 @@ public class DataFrameTest {
     void create_csv() throws IOException {
         DataFrame v;
         try (FileInputStream f = new FileInputStream("src/test/resources/DUMMY1.csv")) {
-            v = new DataFrame(f, InputFormat.CommaSeparatedValues);
+            v = new DataFrame(f, DataFrame.InputFormat.CommaSeparatedValues);
         }
         assertArrayEquals(v.col_types, DUMMY1_TYPES);
         assertEquals(v.getSize(), 40);
@@ -62,7 +62,7 @@ public class DataFrameTest {
     void create_tsv() throws IOException {
         DataFrame v;
         try (FileInputStream f = new FileInputStream("src/test/resources/DUMMY2.tsv")) {
-            v = new DataFrame(f, InputFormat.TabSeparatedValues);
+            v = new DataFrame(f, DataFrame.InputFormat.TabSeparatedValues);
         }
         assertArrayEquals(v.col_types, DUMMY2_TYPES);
         assertEquals(v.getSize(), 10);
