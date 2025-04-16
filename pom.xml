@@ -91,13 +91,13 @@
             <id>simple-command</id>
             <phase>package</phase>
             <goals>
-              <goal>attached</goal>
+              <goal>single</goal>
             </goals>
           </execution>
         </executions>
       </plugin>
 		</plugins>
-		<pluginManagement>
+				<pluginManagement>
 			<!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
 			<plugins>
 				<!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
@@ -141,5 +141,6 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+
 	</build>
 </project>

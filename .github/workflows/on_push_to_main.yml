@@ -13,7 +13,7 @@ jobs:
   build:
     name: 'Actual Stuff'
     permissions: write-all
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: 'Load Repository'
         uses: actions/checkout@v4
@@ -38,9 +38,10 @@ jobs:
 
       - name: 'Packge all the stuff'
         run: |
+          mvn clean compile
           mvn versions:set -DnewVersion=$(cat version_value)
           rm -f pom.xml.versionsBackup
-          mvn package
+          mvn -e -X clean package
 
       - name: 'Make release'
         run: gh release create $(cat version_value) --generate-notes ./target/*.jar

@@ -134,4 +134,7 @@ public interface IDataFrame extends Iterable<String> {
     default float Min(String col){
         throw new NotImplementedYet();
     }
+    default String toCSV() {
+        throw new NotImplementedYet();
+    }
 }
