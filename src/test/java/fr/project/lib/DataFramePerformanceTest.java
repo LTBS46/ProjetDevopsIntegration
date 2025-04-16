@@ -30,7 +30,7 @@ public class DataFramePerformanceTest {
 
         assertTrue(shape1[0] > 9000);
         assertTrue(shape2[0] > 9000);
-        assertTrue(shape1[1] == 1);
+        assertEquals(1, shape1[1]);
         assertTrue(shape2[1] > 2);
     }
 

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -66,10 +67,10 @@ public class DataFrameTest {
         u.col_label[0] = "string";
     }
 
-    private final static Class<?>[] DUMMY1_TYPES = new Class<?>[] {
+    private static final Class<?>[] DUMMY1_TYPES = new Class<?>[] {
             LocalDate.class, String.class, Integer.class, Float.class
     };
-    private final static Class<?>[] DUMMY2_TYPES = new Class<?>[] {
+    private static final Class<?>[] DUMMY2_TYPES = new Class<?>[] {
             Integer.class, Integer.class
     };
 
@@ -79,8 +80,8 @@ public class DataFrameTest {
         try (FileInputStream f = new FileInputStream("src/test/resources/DUMMY1.csv")) {
             v = new DataFrame(f, DataFrame.InputFormat.CommaSeparatedValues);
         }
-        assertArrayEquals(v.col_types, DUMMY1_TYPES);
-        assertEquals(v.getSize(), 40);
+        assertArrayEquals(DUMMY1_TYPES, v.col_types);
+        assertEquals(40, v.getSize());
     }
 
     @Test
@@ -89,19 +90,15 @@ public class DataFrameTest {
         try (FileInputStream f = new FileInputStream("src/test/resources/DUMMY2.tsv")) {
             v = new DataFrame(f, DataFrame.InputFormat.TabSeparatedValues);
         }
-        assertArrayEquals(v.col_types, DUMMY2_TYPES);
-        assertEquals(v.getSize(), 10);
+        assertArrayEquals(DUMMY2_TYPES, v.col_types);
+        assertEquals(10, v.getSize());
     }
 
 
     @Test
     void testOverrideing() {
         for (Method m : Arrays.stream(DataFrame.class.getMethods()).toList()) {
-            if (m.getDeclaringClass() == IDataFrame.class) {
-                System.out.println("Attention : " + m.getName()
-                        + " has not been implemented it will trigger an error in the future");
-                System.out.println();
-            }
+            assertNotEquals(m.getDeclaringClass(), IDataFrame.class);
         }
     }
 
