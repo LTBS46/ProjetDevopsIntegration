@@ -13,7 +13,7 @@ jobs:
   build:
     name: 'Actual Stuff'
     permissions: write-all
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: 'Load Repository'
         uses: actions/checkout@v4
