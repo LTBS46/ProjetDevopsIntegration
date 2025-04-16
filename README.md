@@ -93,3 +93,8 @@ Les outils qu'on a utilisé nous ont permis une meilleur gestion du projet/code.
 			<version>4.13.2</version>
 </dependency>
 ```
+# Docker
+Présent sous docker HUB:
+```bash
+docker pull frubit/rakoun-dataframe
+```
