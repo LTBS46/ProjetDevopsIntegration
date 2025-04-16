@@ -6,13 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-
-import fr.project.lib.DataFrame.InputFormat;
 
 public class DataFrameTest {
 
@@ -53,7 +52,7 @@ public class DataFrameTest {
     void create_csv() throws IOException {
         DataFrame v;
         try (FileInputStream f = new FileInputStream("src/test/resources/DUMMY1.csv")) {
-            v = new DataFrame(f, InputFormat.CommaSeparatedValues);
+            v = new DataFrame(f, DataFrame.InputFormat.CommaSeparatedValues);
         }
         assertArrayEquals(v.col_types, DUMMY1_TYPES);
         assertEquals(v.getSize(), 40);
@@ -63,9 +62,21 @@ public class DataFrameTest {
     void create_tsv() throws IOException {
         DataFrame v;
         try (FileInputStream f = new FileInputStream("src/test/resources/DUMMY2.tsv")) {
-            v = new DataFrame(f, InputFormat.TabSeparatedValues);
+            v = new DataFrame(f, DataFrame.InputFormat.TabSeparatedValues);
         }
         assertArrayEquals(v.col_types, DUMMY2_TYPES);
         assertEquals(v.getSize(), 10);
+    }
+
+    @Test
+    void testOverrideing() {
+        for (Method m : Arrays.stream(DataFrame.class.getMethods()).toList()) {
+            if (m.getDeclaringClass() == IDataFrame.class) {
+                System.out.println("Attention : " + m.getName()
+                        + " has not been implemented it will trigger an error in the future");
+                System.out.println();
+            }
+        }
+
     }
 }

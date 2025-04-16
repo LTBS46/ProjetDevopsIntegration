@@ -6,7 +6,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -214,5 +216,9 @@ public class DataFrame implements IDataFrame {
         }
         return sb.toString();
 
+    }
+
+    public Iterator<String> iterator() {
+        return Arrays.asList(col_label).iterator();// Arrays.asList(col_label).iterator();
     }
 }
