@@ -22,13 +22,30 @@ import fr.project.lib.TabSeparatedValuesLexer;
 import fr.project.lib.TabSeparatedValuesParser;
 import fr.project.lib.TabSeparatedValuesParser.TabSeparatedValuesFileContext;
 
-// intermediary class used by CSV
+
+/**
+ * A utility class for parsing tabular data from CSV/TSV files into a structured format.
+ * Uses ANTLR parsers for robust parsing of delimited text files.
+ */
 public final class TableInput {
-
+    /** The parsed data as a 2D String array [rows][columns] */
     public final String[][] data;
+    
+    /** Array of column labels */
     public final String[] col_label;
-    public final int w, h;
+    
+    /** Width (number of columns) of the table */
+    public final int w;
+    
+    /** Height (number of rows) of the table */
+    public final int h;
 
+    /**
+     * Constructs a new TableInput with specified dimensions
+     * @param width Number of columns
+     * @param height Number of rows
+     */
+    
     TableInput(int width, int height) {
         col_label = new String[width];
         data = new String[height][width];
@@ -36,6 +53,11 @@ public final class TableInput {
         h = height;
     }
 
+    /**
+     * Fills empty cells in the table with default values:
+     * - Empty column labels become "colN"
+     * - Empty data cells become ""
+     */
     public void fill() {
         for (int i = 0; i < w; i += 1) {
             if (col_label[i] == null)
@@ -48,84 +70,92 @@ public final class TableInput {
         }
     }
 
+    /**
+     * Parses a CSV field context into a String value
+     * @param fc The ANTLR parser context for the field
+     * @return The parsed String value
+     */
     private static String parseField(CommaSeparatedValuesParser.FieldContext fc) {
         return parseField(fc.getText(), ParseFieldStatus.from(fc));
     }
 
+    /**
+     * Parses a TSV field context into a String value
+     * @param fc The ANTLR parser context for the field
+     * @return The parsed String value
+     */
     private static String parseField(TabSeparatedValuesParser.FieldContext fc) {
         return parseField(fc.getText(), ParseFieldStatus.from(fc));
     }
 
+    /**
+     * Enum representing the different types of fields that can be parsed
+     */
     private enum ParseFieldStatus {
-        Text, String;
+        /** Unquoted text field */ 
+        Text, 
+        /** Quoted string field */
+        String;
 
+        /**
+         * Determines field type from TSV parser context
+         */
         private static ParseFieldStatus from(TabSeparatedValuesParser.FieldContext fc) {
-            return fc.TEXT() != null ? ParseFieldStatus.Text : (fc.STRING() != null ? ParseFieldStatus.String : null);
+            return fc.TEXT() != null ? ParseFieldStatus.Text : 
+                  (fc.STRING() != null ? ParseFieldStatus.String : null);
         }
 
+        /**
+         * Determines field type from CSV parser context
+         */
         private static ParseFieldStatus from(CommaSeparatedValuesParser.FieldContext fc) {
-            return fc.TEXT() != null ? ParseFieldStatus.Text : (fc.STRING() != null ? ParseFieldStatus.String : null);
+            return fc.TEXT() != null ? ParseFieldStatus.Text : 
+                  (fc.STRING() != null ? ParseFieldStatus.String : null);
         }
     }
 
+    /**
+     * Parses a field's raw text according to its type
+     * @param text The raw text content of the field
+     * @param pfs The field's parse status (quoted/unquoted)
+     * @return The processed String value
+     */
     private static String parseField(String text, ParseFieldStatus pfs) {
         return pfs == null ? "" : switch (pfs) {
-            case Text -> text;
+            case Text -> text;  // Unquoted text used as-is
             case String -> String.join("\"", text.substring(1, text.length() - 1).split("\"\""));
+                // Quoted strings have outer quotes removed and escaped quotes un-doubled
         };
     }
 
-    /*    private static <LEXER extends TokenSource, PARSER, FILECONTEXT, ROWCONTEXT, FIELDCONTEXT> TableInput parseSV(
-            final InputStream is, final Function<CharStream, LEXER> lx, final Function<TokenStream, PARSER> ps,
-            final Function<PARSER, FILECONTEXT> fc, final Function<FILECONTEXT, ROWCONTEXT> hd,
-            final ToIntFunction<ROWCONTEXT> rlen,final ToIntFunction<FILECONTEXT> hlen,
-            final BiFunction<ROWCONTEXT, Integer, FIELDCONTEXT> ritem, final Function<FIELDCONTEXT, String> pf,
-            final BiFunction<FILECONTEXT, Integer, ROWCONTEXT> gl) throws IOException {
-        final CharStream ais = fromStream(is);
-        final LEXER lexer = lx.apply(ais);
-        final CommonTokenStream tokens = new CommonTokenStream(lexer);
-        final PARSER parser = ps.apply(tokens);
-        final FILECONTEXT tree = fc.apply(parser);
-        final ROWCONTEXT header_fields = hd.apply(tree);
-        final int width = rlen.applyAsInt(header_fields);
-        final int height = hlen.applyAsInt(tree);
-        final TableInput rv = new TableInput(width, height);
-
-        for (int i = 0; i < width; i += 1) {
-            rv.col_label[i] = pf.apply(ritem.apply(header_fields, i));
-        }
-
-        for (int i = 0; i < height; i += 1) {
-            final ROWCONTEXT rc = gl.apply(tree, i);
-            for (int j = 0; j < width; j += 1) {
-                rv.data[i][j] = pf.apply(ritem.apply(rc, j));
-            }
-        }
-
-        return rv;
-    }
-
-    public static TableInput _parseTabSeparatedValues(InputStream is) throws IOException {
-        return parseSV(is, TabSeparatedValuesLexer::new, TabSeparatedValuesParser::new,
-                TabSeparatedValuesParser::tabSeparatedValuesFile, (f) -> f.hdr().row(), (r) -> r.field().size(),
-                (t) -> t.row().size(), (r, i) -> r.field(i), TableInput::parseField, (l, i) -> l.row(i));
-    }*/
-
+    /**
+     * Parses tab-separated values from an input stream
+     * @param is The input stream containing TSV data
+     * @return TableInput containing parsed data
+     * @throws IOException If there's an error reading the stream
+     */
     public static TableInput parseTabSeparatedValues(InputStream is) throws IOException {
+        // Set up ANTLR parsing pipeline
         final CharStream ais = fromStream(is);
         final TabSeparatedValuesLexer lexer = new TabSeparatedValuesLexer(ais);
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         final TabSeparatedValuesParser parser = new TabSeparatedValuesParser(tokens);
+        
+        // Parse the complete file
         final TabSeparatedValuesFileContext tree = parser.tabSeparatedValuesFile();
         final TabSeparatedValuesParser.RowContext header_fields = tree.hdr().row();
+        
+        // Determine table dimensions
         final int width = header_fields.field().size();
         final int height = tree.row().size();
         final TableInput rv = new TableInput(width, height);
 
+        // Parse column headers
         for (int i = 0; i < width; i += 1) {
             rv.col_label[i] = parseField(header_fields.field(i));
         }
 
+        // Parse data rows
         for (int i = 0; i < height; i += 1) {
             final TabSeparatedValuesParser.RowContext rc = tree.row(i);
             for (int j = 0; j < width; j += 1) {
@@ -136,20 +166,34 @@ public final class TableInput {
         return rv;
     }
 
+    /**
+     * Parses comma-separated values from an input stream
+     * @param is The input stream containing CSV data
+     * @return TableInput containing parsed data
+     * @throws IOException If there's an error reading the stream
+     */
     public static TableInput parseCommaSeparatedValues(InputStream is) throws IOException {
+        // Set up ANTLR parsing pipeline
         final CharStream ais = fromStream(is);
         final CommaSeparatedValuesLexer lexer = new CommaSeparatedValuesLexer(ais);
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         final CommaSeparatedValuesParser parser = new CommaSeparatedValuesParser(tokens);
+        
+        // Parse the complete file
         final CommaSeparatedValuesFileContext tree = parser.commaSeparatedValuesFile();
         final CommaSeparatedValuesParser.RowContext header_fields = tree.hdr().row();
+        
+        // Determine table dimensions
         final int width = header_fields.field().size();
         final int height = tree.row().size();
         final TableInput rv = new TableInput(width, height);
 
+        // Parse column headers
         for (int i = 0; i < width; i += 1) {
             rv.col_label[i] = parseField(header_fields.field(i));
         }
+        
+        // Parse data rows
         for (int i = 0; i < height; i += 1) {
             final CommaSeparatedValuesParser.RowContext rc = tree.row(i);
             for (int j = 0; j < width; j += 1) {

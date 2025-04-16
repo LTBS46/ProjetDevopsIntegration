@@ -1,0 +1,5 @@
+key,value,flag,timestamp
+A001,15.5,true,2023-01-15
+B002,-3,false,2023-02-20T08:30
+C003,0,,invalid_date
+D004,test,true,2023-03-10
