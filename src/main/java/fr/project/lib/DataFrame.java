@@ -67,7 +67,7 @@ public class DataFrame implements IDataFrame {
      * @param filename Path to input file
      * @throws IOException If file reading fails
      */
-    DataFrame(String filename) throws IOException {
+    public DataFrame(String filename) throws IOException {
         this(new FileInputStream(filename));
     }
 
