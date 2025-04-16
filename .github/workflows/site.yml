@@ -1,0 +1,39 @@
+on:
+  push:
+    branches:
+      - 'main'
+#  release:
+#    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      pages: write
+      
+    environment:
+      name: github-pages
+      url: ${{ steps.build.outputs.page_url }}
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: 'Have Maven Shut Up'
+      run: echo "--batch-mode" >> .mvn/maven.config
+    
+    - name: 'Set up JDK 17'
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: 'Generate Pages'
+      run: mvn site
+
+    - uses: actions/upload-pages-artifact@v3
+      with:
+        path: target/site/
+      
+    - uses: actions/deploy-pages@v4 # or specific "vX.X.X" version tag for this action
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}

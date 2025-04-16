@@ -19,7 +19,23 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 'Have Maven Shut Up'
-        run: echo "--batch-mode" >> .mvn/maven.config
+        run: |
+          echo "--batch-mode" >> .mvn/maven.config
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<EOF
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                                        https://maven.apache.org/xsd/settings-1.0.0.xsd">
+              <servers>
+                  <server>
+                      <id>github</id>  <!-- Must match distributionManagement in pom.xml -->
+                      <username>\${env.GITHUB_ACTOR}</username>
+                      <password>\${env.GITHUB_TOKEN}</password>
+                  </server>
+              </servers>
+          </settings>
+          EOF
       
       - name: 'Setup Java & Maven'
         uses: actions/setup-java@v4
@@ -27,6 +43,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+          server-id: github
 
       - run: |
           git config user.name "GitHub Actions Bot"
@@ -38,15 +55,22 @@ jobs:
 
       - name: 'Packge all the stuff'
         run: |
-          mvn clean compile
           mvn versions:set -DnewVersion=$(cat version_value)
           rm -f pom.xml.versionsBackup
-          mvn -e -X clean package
+          mvn package
 
       - name: 'Make release'
         run: gh release create $(cat version_value) --generate-notes ./target/*.jar
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+        
+      - name: Publish to GitHub Packages
+        run: mvn -B deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+
 
       - name: 'Add Version & Commit'
         run: |
