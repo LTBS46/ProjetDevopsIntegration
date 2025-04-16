@@ -73,6 +73,47 @@ public interface IDataFrame extends Iterable<String> {
     default IDataFrame get(String... cols) {
         throw new NotImplementedYet();   
     }
+
+    /**
+     * Retrieves a single element, full row, or full column from the DataFrame based on the specified
+     * row and column selectors. This is the most flexible accessor method supporting multiple access patterns.
+     * 
+     * <p><b>Access Patterns:</b>
+     * <ul>
+     *   <li><b>Single Element:</b> {@code getElem(rowIndex, columnName)} or {@code getElem(rowIndex, columnIndex)}</li>
+     *   <li><b>Full Row:</b> {@code getElem(rowIndex, null)}</li>
+     *   <li><b>Full Column:</b> {@code getElem(null, columnSpec)}</li>
+     * </ul>
+     * 
+     * @param rowSpec The row selector, which can be:
+     *                <ul>
+     *                  <li>{@code Integer} - row index (0-based)</li>
+     *                  <li>{@code String} - row label (if labels are set)</li>
+     *                  <li>{@code null} - indicates all rows</li>
+     *                </ul>
+     * @param colSpec The column selector, which can be:
+     *                <ul>
+     *                  <li>{@code Integer} - column index (0-based)</li>
+     *                  <li>{@code String} - column name</li>
+     *                  <li>{@code null} - indicates all columns</li>
+     *                </ul>
+     * @return The requested data as:
+     *         <ul>
+     *           <li>{@code Object} - for single element access</li>
+     *           <li>{@code Object[]} - for full row/column access</li>
+     *         </ul>
+     * @throws IllegalStateException if the DataFrame is empty
+     * @throws IllegalArgumentException if:
+     *         <ul>
+     *           <li>Both specifiers are null</li>
+     *           <li>Invalid specifier types are provided</li>
+     *           <li>Row/column labels don't exist</li>
+     *         </ul>
+     * @throws IndexOutOfBoundsException if numeric indices are out of bounds
+     */
+    default Object getElem(Object rowSpec, Object colSpec){
+        throw new NotImplementedYet();
+    }
     
     /**
      * Gets the number of dimensions of the DataFrame (always 2 for 2D structure).

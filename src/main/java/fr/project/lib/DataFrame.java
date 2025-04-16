@@ -384,6 +384,79 @@ public class DataFrame implements IDataFrame {
     }
 
     /**
+     * Single element/row/column access
+     */
+    @Override
+    public Object getElem(Object rowSpec, Object colSpec) {
+        if (getEmpty()) {
+            throw new IllegalStateException("DataFrame is empty");
+        }
+
+        if (rowSpec == null) {
+            int colIdx = resolveColumnIndex(colSpec);
+            Object[] column = new Object[data.length];
+            for (int i = 0; i < data.length; i++) {
+                column[i] = data[i][colIdx];
+            }
+            return column;
+        }
+
+        // Handle full row access
+        if (colSpec == null) {
+            int rowIdx = resolveRowIndex(rowSpec);
+            return data[rowIdx].clone(); // Defensive copy
+        }
+
+        // Single element access
+        return data[resolveRowIndex(rowSpec)][resolveColumnIndex(colSpec)];
+    }
+
+    // Helper methods for single element access
+    private int resolveRowIndex(Object rowSpec) {
+        if (rowSpec instanceof Integer) {
+            int idx = (Integer) rowSpec;
+            if (idx < 0 || idx >= data.length) {
+                throw new IndexOutOfBoundsException("Row index out of bounds");
+            }
+            return idx;
+        } else if (rowSpec instanceof String) {
+            // Find row by label
+            for (int i = 0; i < li_label.length; i++) {
+                if (li_label[i].equals(rowSpec)) {
+                    return i;
+                }
+            }
+            throw new IllegalArgumentException("Row label not found");
+        } else if (rowSpec == null) {
+            throw new IllegalArgumentException("Row specifier cannot be null");
+        } else {
+            throw new IllegalArgumentException("Invalid row specifier type");
+        }
+    }
+
+    private int resolveColumnIndex(Object colSpec) {
+        if (colSpec instanceof Integer) {
+            int idx = (Integer) colSpec;
+            if (idx < 0 || idx >= col_label.length) {
+                throw new IndexOutOfBoundsException("Column index out of bounds");
+            }
+            return idx;
+        } else if (colSpec instanceof String) {
+            int idx = findColumnIndex((String) colSpec);
+            if (idx == -1) {
+                throw new IllegalArgumentException("Column not found");
+            }
+            return idx;
+        } else if (colSpec == null) {
+            throw new IllegalArgumentException("Column specifier cannot be null");
+        } else {
+            throw new IllegalArgumentException("Invalid column specifier type");
+        }
+    }
+
+
+
+    /**
      * Generates string representation of DataFrame
      * @return Formatted table showing data with labels
      */
