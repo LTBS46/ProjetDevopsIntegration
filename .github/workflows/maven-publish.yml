@@ -17,14 +17,14 @@ jobs:
     steps:
 
       - uses: actions/checkout@v3
-      - name: Set up JDK
 
 
       - name: 'Have Maven Shut Up'
         run: echo "--batch-mode" >> .mvn/maven.config
 
         
-      - uses: actions/setup-java@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
