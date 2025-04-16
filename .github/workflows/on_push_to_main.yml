@@ -38,10 +38,9 @@ jobs:
 
       - name: 'Packge all the stuff'
         run: |
-          mvn clean compile
           mvn versions:set -DnewVersion=$(cat version_value)
           rm -f pom.xml.versionsBackup
-          mvn -e -X clean package
+          mvn package
 
       - name: 'Make release'
         run: gh release create $(cat version_value) --generate-notes ./target/*.jar
