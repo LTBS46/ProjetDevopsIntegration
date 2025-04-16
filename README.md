@@ -12,7 +12,6 @@ A Java implementation of a DataFrame library similar to Python's pandas, designe
 |`dev` branch status|[![.github/workflows/actions.yml](https://github.com/LTBS46/ProjetDevopsIntegration/actions/workflows/actions.yml/badge.svg?branch=dev)](https://github.com/LTBS46/ProjetDevopsIntegration/actions/workflows/actions.yml)|
 
 ## Features
-
 - **Tabular Data Structure**: Store and manipulate 2D data with labeled rows and columns
 - **File Parsing**: Read CSV and TSV files with automatic type detection
 - **Data Operations**:
@@ -20,7 +19,13 @@ A Java implementation of a DataFrame library similar to Python's pandas, designe
   - Row/column removal
   - Size and shape queries
   - Data type management
+  - Mean, Max and Min of a specific column
+  - Write a DataFrame in a csv
 - **Type Safety**: Automatic detection and conversion of data types (String, Integer, Float)
+## Workflow and tools 
+
+First of all we choose a specific way to manage branches in git to allow.
+The tools are mostly in the badgs of this readme.
 
 
 ## Choices of branches
