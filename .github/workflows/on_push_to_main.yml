@@ -1,37 +1,19 @@
 name: 'On Main Release'
 
+description: 'Put a release out & Update version'
+
 on:
   push: 
+    paths:
+      - 'src/main'
+      - 'pom.mxl'
     branches:
       - 'main'
 
 jobs:
-  check:
-    name: 'check stuff'
-    runs-on: ubuntu-latest
-    outputs:
-      status: ${{ steps.early.outcome }}
-    steps:
-      - name: 'Load Repository'
-        uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-
-      - run: |
-          git config user.name "GitHub Actions Bot"
-          git config user.email "<>"
-
-      - id: early
-        run: git log | head - -n 5 | python3 version_state_checker.py
-        shell: /usr/bin/bash {0}
-
   build:
     name: 'Actual Stuff'
-    needs: check
     permissions: write-all
-    if: needs.check.outputs.status == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: 'Load Repository'
@@ -52,7 +34,8 @@ jobs:
           git config user.email "<>"
 
       - name: 'Update version'
-        run: python3 version_handler.py min
+        run: |
+          python3 version_handler.py min
 
       - name: 'Packge all the stuff'
         run: |
