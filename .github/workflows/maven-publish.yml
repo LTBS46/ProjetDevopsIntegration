@@ -13,16 +13,12 @@ jobs:
     permissions:
       contents: read
       packages: write
-
     steps:
-
       - uses: actions/checkout@v3
-
 
       - name: 'Have Maven Shut Up'
         run: echo "--batch-mode" >> .mvn/maven.config
-
-        
+  
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
