@@ -23,6 +23,14 @@ A Java implementation of a DataFrame library similar to Python's pandas, designe
 - **Type Safety**: Automatic detection and conversion of data types (String, Integer, Float)
 
 
+## Choices of branches
+
+- **Main** : Contain the latest stable release.
+- **Dev**  : Contain the next version which is currently in developement.
+- **Other branches**  : The other branches are features branches. 
+They are not permanent et will be merge with Dev when the feature is implemented.
+
+
 # Installation
 
 1. Clone the repository:
