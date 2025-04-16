@@ -4,8 +4,9 @@
 name: 'Publish to GitHub Packages'
 
 on:
-  release:
-    types: [created]
+  push:
+    branches:
+      - 'main'
 
 jobs:
   publish:
