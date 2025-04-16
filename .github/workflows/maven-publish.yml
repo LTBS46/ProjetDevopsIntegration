@@ -9,7 +9,6 @@ on:
 
 jobs:
   publish:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -18,6 +17,12 @@ jobs:
     steps:
 
       - uses: actions/checkout@v3
+
+
+      - name: 'Have Maven Shut Up'
+        run: echo "--batch-mode" >> .mvn/maven.config
+
+        
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -33,9 +38,4 @@ jobs:
         run: mvn -B deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - uses: actions/checkout@v4
-
-    - name: 'Have Maven Shut Up'
-      run: echo "--batch-mode" >> .mvn/maven.config
     
